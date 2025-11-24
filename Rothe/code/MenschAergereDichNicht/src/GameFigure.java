@@ -1,20 +1,21 @@
 public class GameFigure {
-    private final Player owner;
+    private final Field house; // house position (starting position)
+    private final Player owner; // Player who owns this figure
     private Field field; // current position, null when off-board
-    private final int id;
 
-    public GameFigure(Player owner, int id) {
+    public GameFigure(Player owner) {
         this.owner = owner;
-        this.id = id;
-        this.field = null;
+        this.house = new Field();
+        this.house.setNext(this.owner.getStartField());
+        this.field = house;
+    }
+
+    public void prepareForNewGame() {
+        this.setField(house);
     }
 
     public Player getOwner() {
         return this.owner;
-    }
-
-    public int getId() {
-        return this.id;
     }
 
     /** Returns the Field this figure stands on (may be null). */
@@ -22,35 +23,43 @@ public class GameFigure {
         return this.field;
     }
 
-    /** Internal setter used by Field to avoid recursion. */
-    void setField(Field f) {
-        if (this.field == f) return;
+    /** Setter used by Field to avoid recursion. */
+    public void setField(Field newField) {
+        if (this.field == newField) return; // Figure is already on this field
         if (this.field != null) {
             this.field.clearOccupant();
         }
-        this.field = f;
+        this.field = newField;
         if (this.field != null && this.field.getOccupant() != this) {
             this.field.setOccupant(this);
         }
     }
 
-    /** Internal clear used by Field when removing occupant. */
-    void clearField() {
+    public void setToHouse() {
+        this.setField(this.house);
+    }
+
+    /** Clear used by Field when removing occupant. */
+    public void clearField() {
+        if (this.field == null) return;
+        this.field.clearOccupant(false);
         this.field = null;
     }
 
-    /** Move this figure to the given field. This will update both sides (old and new fields).
-     * If newField is null the figure will be removed from the board.
-     */
-    public void moveTo(Field newField) {
-        if (this.field != null) {
-            // remove from old field
-            Field old = this.field;
-            // clear occupant without touching this.field (Field.clearOccupant calls clearFieldInternal)
-            old.clearOccupant();
+    /** Move this figure forward by the given number of fields. This will update both sides (old and new fields). */
+    public void move(int numSteps) {
+        if(this.field == null) {
+            throw new IllegalStateException("Figure is not on the board");
         }
-        if (newField != null) {
-            newField.setOccupant(this);
+        // get the field in numSteps ahead
+        Field newField;
+        newField = this.field.getNext(numSteps);
+        // remove from old field
+        this.field.clearOccupant(false);
+        this.field = newField;
+        // set on new field if it exists (it has to exist, if it doesn't there is a programming error)
+        if (this.field != null) {
+            this.field.setOccupant(this);
         }
     }
 }

@@ -17,17 +17,29 @@ public class GameManager {
 
         this.players = new Player[4];
         for (int p = 0; p < players.length; p++) {
-            players[p] = new Player("Player " + (p + 1));
+            if (fields.length % players.length != 0) {
+                throw new IllegalArgumentException("Fields cannot be equally distributed among players");
+            }
+            int startIndex = p * (fields.length / players.length);
+            players[p] = new Player("Player " + (p + 1), 4, fields[startIndex]);
+        }
+        resetGame();
+    }
+
+    private void resetGame() {
+        for (Field field : fields) {
+            field.clearOccupant();
+        }
+        // Reset all figures to their houses
+        for (Player player : players) {
+            for (GameFigure figure : player.getFigures()) {
+                figure.prepareForNewGame();
+            }
         }
     }
 
     public Field[] getFields() {
         return fields;
-    }
-
-    public Field getField(int index) {
-        if (index < 0 || index >= fields.length) throw new IndexOutOfBoundsException();
-        return fields[index];
     }
 
     public Player[] getPlayers() {

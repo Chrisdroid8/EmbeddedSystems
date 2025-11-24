@@ -1,12 +1,16 @@
 public class Player {
     private final String name;
     private final GameFigure[] figures;
+    private final Field startField;
+    private final int numFigures;
 
-    public Player(String name) {
+    public Player(String name, int numFigures, Field startField) {
         this.name = name;
-        this.figures = new GameFigure[4];
-        for (int i = 0; i < 4; i++) {
-            this.figures[i] = new GameFigure(this, i);
+        this.startField = startField;
+        this.numFigures = numFigures;
+        this.figures = new GameFigure[this.numFigures];
+        for (int i = 0; i < this.numFigures; i++) {
+            this.figures[i] = new GameFigure(this);
         }
     }
 
@@ -18,8 +22,7 @@ public class Player {
         return figures;
     }
 
-    public GameFigure getFigure(int index) {
-        if (index < 0 || index >= figures.length) throw new IndexOutOfBoundsException();
-        return figures[index];
+    public Field getStartField() {
+        return startField;
     }
 }
