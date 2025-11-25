@@ -26,15 +26,20 @@ public class GameFigure {
         return this.field;
     }
 
-    /** Setter used by Field to avoid recursion. */
+    /**
+     * Set the field this figure stands on.
+     * If already on a field, removes it first. Then adds to the new field.
+     *
+     * @param newField the field to move to (may be {@code null})
+     */
     public void setField(Field newField) {
-        if (this.field == newField) return; // Figure is already on this field
+        if (this.field == newField) return;
         if (this.field != null) {
-            this.field.clearOccupant();
+            this.field.removeFigure(this);
         }
         this.field = newField;
-        if (this.field != null && this.field.getOccupant() != this) {
-            this.field.setOccupant(this);
+        if (this.field != null) {
+            this.field.addFigure(this);
         }
     }
 
@@ -55,14 +60,13 @@ public class GameFigure {
             throw new IllegalStateException("Figure is not on the board");
         }
         // get the field in numSteps ahead
-        Field newField;
-        newField = this.field.getNext(numSteps);
+        Field newField = this.field.getNext(numSteps);
         // remove from old field
         this.field.clearOccupant(false);
         this.field = newField;
         // set on new field if it exists (it has to exist, if it doesn't there is a programming error)
         if (this.field != null) {
-            this.field.setOccupant(this);
+            this.field.addFigure(this);
         }
     }
 }

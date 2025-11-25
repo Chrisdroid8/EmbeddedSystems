@@ -1,44 +1,64 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Occupation holds an optional player and the occupying game figure for a Field.
- * This is the existing richer representation used by the project.
+ * Occupation holds an optional player and a list of occupying game figures from that player.
+ * All figures on a field must belong to the same player.
  */
 public class Occupation {
     private Player player;
-    private GameFigure gameFigure;
+    private final List<GameFigure> figures;
 
     public Occupation() {
         this.player = null;
-        this.gameFigure = null;
-    }
-
-    public Occupation(Player player, GameFigure gameFigure) {
-        this.player = player;
-        this.gameFigure = gameFigure;
+        this.figures = new ArrayList<>();
     }
 
     public boolean isOccupied() {
-        return this.gameFigure != null;
+        return !this.figures.isEmpty();
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
+    public List<GameFigure> getFigures() {
+        return new ArrayList<>(this.figures);
     }
 
     public GameFigure getGameFigure() {
-        return gameFigure;
+        return this.figures.isEmpty() ? null : this.figures.get(0);
     }
 
-    public void setGameFigure(GameFigure gameFigure) {
-        this.gameFigure = gameFigure;
+    public void addFigure(GameFigure figure) {
+        if (figure == null) return;
+        if (!this.figures.isEmpty() && !this.player.equals(figure.getOwner())) {
+            throw new IllegalArgumentException(
+                "Cannot add figure from " + figure.getOwner().getName() +
+                " to field occupied by " + this.player.getName()
+            );
+        }
+        if (this.figures.isEmpty()) {
+            this.player = figure.getOwner();
+        }
+        if (!this.figures.contains(figure)) {
+            this.figures.add(figure);
+        }
     }
 
-    /** Clear both player and figure references. */
+    public void removeFigure(GameFigure figure) {
+        this.figures.remove(figure);
+        if (this.figures.isEmpty()) {
+            this.player = null;
+        }
+    }
+
+    public boolean canAccept(Player player) {
+        return this.figures.isEmpty() || this.player.equals(player);
+    }
+
     public void clear() {
+        this.figures.clear();
         this.player = null;
-        this.gameFigure = null;
     }
 }

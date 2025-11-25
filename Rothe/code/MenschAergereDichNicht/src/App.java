@@ -9,9 +9,9 @@ public class App {
         Field[] fields = manager.getFields();
 
         printGameState(manager);
-        fields[0].setOccupant(figuresOfP0[0]);
+        fields[0].addFigure(figuresOfP0[0]);
         printGameState(manager);
-        fields[0].setOccupant(figuresOfP0[1]);
+        fields[0].addFigure(figuresOfP0[1]);
         printGameState(manager);
         figuresOfP0[1].move(2);
         printGameState(manager);

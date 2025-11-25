@@ -87,26 +87,32 @@ public class Field {
     }
 
     /**
-     * Place a figure on this field. This will update the figure's internal field reference.
-     * If there is an existing occupant it will be replaced (caller may want to handle that).
+     * Add a figure to this field. Multiple figures from the same player are allowed.
      *
-     * @param figure the {@link GameFigure} to place on this field (may be {@code null} to clear)
+     * @param figure the {@link GameFigure} to add
+     * @throws IllegalArgumentException if different player's figures occupy this field
      */
-    public void setOccupant(GameFigure figure) {
-        GameFigure current = this.occupation.getGameFigure();
-        if (current == figure) return;
-
-        // if there's a previous occupant, move it to its house
-        if (current != null) {
-            current.setToHouse();
+    public void addFigure(GameFigure figure) {
+        if (figure == null) return;
+        if (!this.occupation.canAccept(figure.getOwner())) {
+            throw new IllegalArgumentException(
+                "Cannot add figure from " + figure.getOwner().getName() +
+                " to field occupied by " + this.occupation.getPlayer().getName()
+            );
         }
-
-        this.occupation.setGameFigure(figure);
-        this.occupation.setPlayer(figure == null ? null : figure.getOwner());
-
-        if (figure != null && figure.getField() != this) {
+        this.occupation.addFigure(figure);
+        if (figure.getField() != this) {
             figure.setField(this);
         }
+    }
+
+    /**
+     * Remove a specific figure from this field.
+     *
+     * @param figure the figure to remove
+     */
+    public void removeFigure(GameFigure figure) {
+        this.occupation.removeFigure(figure);
     }
 
     /**
@@ -117,28 +123,34 @@ public class Field {
     }
     
     /**
-     * Remove any occupant from this field.
+     * Remove all occupants from this field.
      *
-     * @param notifyFigure if {@code true} will notify the occupying Fig to clear its reference
+     * @param notifyFigures if {@code true} will notify figures to clear their references
      */
-    public void clearOccupant(boolean notifyFigure) {
-        GameFigure current = this.occupation.getGameFigure();
-        if (current != null && notifyFigure) {
-            current.clearField();
+    public void clearOccupant(boolean notifyFigures) {
+        if (notifyFigures) {
+            for (GameFigure fig : this.occupation.getFigures()) {
+                fig.clearField();
+            }
         }
         this.occupation.clear();
     }
 
     /**
-     * Return a short debug string describing this field (index and occupant).
+     * Return a short debug string describing this field (index and occupants).
      *
      * @return debug string
      */
     @Override
     public String toString() {
-        GameFigure g = this.getOccupant();
-        if (g == null) return "Field(" + index + "): <empty>";
-        return "Field(" + index + "): " + g.getOwner().getName();
+        java.util.List<GameFigure> figs = this.occupation.getFigures();
+        if (figs.isEmpty()) return "Field(" + index + "): <empty>";
+        StringBuilder sb = new StringBuilder("Field(" + index + "): ");
+        for (int i = 0; i < figs.size(); i++) {
+            if (i > 0) sb.append(", ");
+            sb.append(figs.get(i).getOwner().getName());
+        }
+        return sb.toString();
     }
 }
 
