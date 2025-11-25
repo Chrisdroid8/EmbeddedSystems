@@ -4,8 +4,8 @@ public class GameManager {
 
     public GameManager() {
         this.fields = new Field[20];
-        for (int i = 0; i < fields.length; i++) {
-            fields[i] = new Field();
+            for (int i = 0; i < fields.length; i++) {
+            fields[i] = new Field(i);
         }
 
         // Link fields into a circular list: each field's next points to the following field,
@@ -14,7 +14,6 @@ public class GameManager {
             Field next = fields[(i + 1) % fields.length];
             fields[i].setNext(next);
         }
-
         this.players = new Player[4];
         for (int p = 0; p < players.length; p++) {
             if (fields.length % players.length != 0) {
@@ -44,10 +43,5 @@ public class GameManager {
 
     public Player[] getPlayers() {
         return players;
-    }
-
-    public Player getPlayer(int index) {
-        if (index < 0 || index >= players.length) throw new IndexOutOfBoundsException();
-        return players[index];
     }
 }

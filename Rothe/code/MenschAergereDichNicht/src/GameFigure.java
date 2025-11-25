@@ -5,7 +5,7 @@ public class GameFigure {
 
     public GameFigure(Player owner) {
         this.owner = owner;
-        this.house = new Field();
+        this.house = new Field(-1);
         this.house.setNext(this.owner.getStartField());
         this.field = house;
     }
@@ -20,6 +20,9 @@ public class GameFigure {
 
     /** Returns the Field this figure stands on (may be null). */
     public Field getField() {
+        if (this.field == house) {
+            return null;
+        }
         return this.field;
     }
 
