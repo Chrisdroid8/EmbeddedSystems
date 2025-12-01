@@ -1,8 +1,9 @@
 /**
- * Represents a player in the game.
+ * Abstract base class representing a player in the game.
  * Each player owns figures, a starting field, and a die (I_Rollable).
+ * Subclasses implement specific player behavior (e.g., keyboard input, AI).
  */
-public class Player {
+public abstract class Player {
     private final String name;
     private final GameFigure[] figures;
     private final Field startField;
@@ -12,12 +13,13 @@ public class Player {
     /**
      * Create a player with the given name, number of figures, and starting field.
      * The player receives a standard 6-sided die.
+     * This constructor is protected for use by subclasses only.
      *
      * @param name player name
      * @param numFigures number of figures this player owns
      * @param startField the starting field for this player's figures
      */
-    public Player(String name, int numFigures, Field startField) {
+    protected Player(String name, int numFigures, Field startField) {
         this.name = name;
         this.startField = startField;
         this.numFigures = numFigures;
@@ -27,6 +29,46 @@ public class Player {
         }
         this.die = new Die6();
     }
+
+    /**
+     * Let the player choose a figure from a list of movable figures.
+     * Finds figures on the board (not in house), then calls the abstract
+     * chooseFigure(int[]) to let the subclass decide.
+     *
+     * @param gameManager the game manager providing access to fields
+     * @return index of the chosen figure (0-based) that is on the board, or -1 if no figures on board
+     */
+    public int chooseMovableFigure() {
+        // Find indices of figures that are on the board (not in house)
+        java.util.List<Integer> movableFigureIndices = new java.util.ArrayList<>();
+        for (int i = 0; i < this.figures.length; i++) {
+            if (this.figures[i].getField() != null) {
+                movableFigureIndices.add(i);
+            }
+        }
+
+        // If no figures on board, return -1
+        if (movableFigureIndices.isEmpty()) {
+            System.out.println(this.getName() + " has no figures on the board.");
+            return -1;
+        }
+
+        // Convert list to array and let the subclass choose
+        int[] movableIndices = new int[movableFigureIndices.size()];
+        for (int i = 0; i < movableFigureIndices.size(); i++) {
+            movableIndices[i] = movableFigureIndices.get(i);
+        }
+
+        return chooseFigure(movableIndices);
+    }
+
+    /**
+     * Abstract method for subclass to choose a figure from the given movable indices.
+     *
+     * @param movableIndices array of 0-based figure indices that are movable
+     * @return one of the indices from movableIndices array
+     */
+    protected abstract int chooseFigure(int[] movableIndices);
 
     public String getName() {
         return name;

@@ -20,7 +20,7 @@ public class GameManager {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
             }
             int startIndex = p * (fields.length / players.length);
-            players[p] = new Player("Player " + (p + 1), 4, fields[startIndex]);
+            players[p] = new PlayerKeyboard("Player " + (p + 1), 4, fields[startIndex]);
         }
         resetGame();
     }

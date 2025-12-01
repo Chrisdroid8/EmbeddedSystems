@@ -16,9 +16,9 @@ public class App {
         players[1].moveFigureOutOfHouse();
         printGameState(manager);
 
-        players[0].getFigures()[0].move(players[0].roll());
+        players[0].getFigures()[players[0].chooseMovableFigure()].move(players[0].roll());
         printGameState(manager);
-        players[1].getFigures()[0].move(players[1].roll());
+        players[1].getFigures()[players[1].chooseMovableFigure()].move(players[1].roll());
         printGameState(manager);
     }
 
