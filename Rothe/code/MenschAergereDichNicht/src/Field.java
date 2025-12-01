@@ -1,5 +1,3 @@
-import java.util.List;
-
 /**
  * Represents a single board field.
  * Fields form a circular sequence via `next` references. Each Field may hold an
