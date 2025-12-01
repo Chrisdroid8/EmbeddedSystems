@@ -5,7 +5,7 @@ public class App {
         GameManager manager = new GameManager();
 
         Player[] players = manager.getPlayers();
-        GameFigure[] figuresOfP0 = players[0].getFigures();
+        // GameFigure[] figuresOfP0 = players[0].getFigures();
         // Field[] fields = manager.getFields();
 
         printGameState(manager);
@@ -15,15 +15,10 @@ public class App {
         printGameState(manager);
         players[1].moveFigureOutOfHouse();
         printGameState(manager);
-        players[1].moveFigureOutOfHouse();
+
+        players[0].getFigures()[0].move(players[0].roll());
         printGameState(manager);
-        players[1].moveFigureOutOfHouse();
-        printGameState(manager);
-        players[1].moveFigureOutOfHouse();
-        printGameState(manager);
-        figuresOfP0[0].move(4);
-        printGameState(manager);
-        figuresOfP0[0].move(1);
+        players[1].getFigures()[0].move(players[1].roll());
         printGameState(manager);
     }
 
