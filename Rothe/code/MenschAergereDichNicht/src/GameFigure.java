@@ -43,8 +43,12 @@ public class GameFigure {
         }
     }
 
-    public void setToHouse() {
+    public void moveToHouse() {
         this.setField(this.house);
+    }
+
+    public void moveOutOfHouse() {
+        this.setField(this.owner.getStartField());
     }
 
     /** Clear used by Field when removing occupant. */

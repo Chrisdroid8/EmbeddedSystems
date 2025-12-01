@@ -25,4 +25,23 @@ public class Player {
     public Field getStartField() {
         return startField;
     }
+
+    public int getFiguresInHouse() {
+        int count = 0;
+        for (GameFigure figure : this.figures) {
+            if (figure.getField() == null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void moveFigureOutOfHouse() {
+        for (GameFigure figure : this.figures) {
+            if (figure.getField() == null) {
+                figure.setField(this.startField);
+                return;
+            }
+        }
+    }
 }

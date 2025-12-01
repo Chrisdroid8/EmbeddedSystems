@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * Represents a single board field.
  * Fields form a circular sequence via `next` references. Each Field may hold an
@@ -95,10 +97,9 @@ public class Field {
     public void addFigure(GameFigure figure) {
         if (figure == null) return;
         if (!this.occupation.canAccept(figure.getOwner())) {
-            throw new IllegalArgumentException(
-                "Cannot add figure from " + figure.getOwner().getName() +
-                " to field occupied by " + this.occupation.getPlayer().getName()
-            );
+            for (GameFigure fig : this.occupation.getFigures()) {
+                fig.moveToHouse();
+            }
         }
         this.occupation.addFigure(figure);
         if (figure.getField() != this) {

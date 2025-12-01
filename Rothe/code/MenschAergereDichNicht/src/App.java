@@ -6,20 +6,24 @@ public class App {
 
         Player[] players = manager.getPlayers();
         GameFigure[] figuresOfP0 = players[0].getFigures();
-        Field[] fields = manager.getFields();
+        // Field[] fields = manager.getFields();
 
         printGameState(manager);
-        fields[0].addFigure(figuresOfP0[0]);
+        players[0].moveFigureOutOfHouse();
         printGameState(manager);
-        fields[0].addFigure(figuresOfP0[1]);
+        players[1].moveFigureOutOfHouse();
         printGameState(manager);
-        figuresOfP0[1].move(2);
+        players[1].moveFigureOutOfHouse();
         printGameState(manager);
-        figuresOfP0[2].setField(fields[0]);
+        players[1].moveFigureOutOfHouse();
         printGameState(manager);
-        figuresOfP0[2].move(1);
+        players[1].moveFigureOutOfHouse();
         printGameState(manager);
-        figuresOfP0[2].move(1);
+        players[1].moveFigureOutOfHouse();
+        printGameState(manager);
+        figuresOfP0[0].move(4);
+        printGameState(manager);
+        figuresOfP0[0].move(1);
         printGameState(manager);
     }
 
