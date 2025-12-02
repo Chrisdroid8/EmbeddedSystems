@@ -1,14 +1,17 @@
 public class GameManager {
     private final Field[] fields;
     private final Player[] players;
+    private final I_RuleSet ruleSet;
+    private static final int PLAYER_COUNT = 4;
 
     public GameManager() {
-        this.fields = new Field[20];
-        int playersCount = 4;
+        this.ruleSet = new RuleSetStandard(PLAYER_COUNT);
+        int numFields = this.ruleSet.getNumFields();
+        this.fields = new Field[numFields];
         // Precompute start indices so we can assign START type while creating fields
-        int[] startIndices = new int[playersCount];
-        for (int p = 0; p < playersCount; p++) {
-            startIndices[p] = p * (fields.length / playersCount);
+        int[] startIndices = new int[PLAYER_COUNT];
+        for (int p = 0; p < PLAYER_COUNT; p++) {
+            startIndices[p] = p * (fields.length / PLAYER_COUNT);
         }
         for (int i = 0; i < fields.length; i++) {
             boolean isStart = false;
@@ -22,7 +25,7 @@ public class GameManager {
             Field next = fields[(i + 1) % fields.length];
             fields[i].setNext(next);
         }
-        this.players = new Player[playersCount];
+        this.players = new Player[PLAYER_COUNT];
         for (int p = 0; p < players.length; p++) {
             if (fields.length % players.length != 0) {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
@@ -51,5 +54,9 @@ public class GameManager {
 
     public Player[] getPlayers() {
         return players;
+    }
+
+    public I_RuleSet getRuleSet() {
+        return ruleSet;
     }
 }
