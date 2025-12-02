@@ -7,6 +7,7 @@ public class Field {
     private final Occupation occupation;
     private Field next; // reference to the next field in the board (for circular board)
     private final int index; // index of the field for easier identification
+    private final FieldType type;
 
     /**
      * Create a Field with the given index. Use indices 0..n-1 for regular board fields.
@@ -15,7 +16,18 @@ public class Field {
      * @param index integer index identifying the field
      */
     public Field(int index) {
+        this(index, FieldType.NORMAL);
+    }
+
+    /**
+     * Create a Field with the given index and type.
+     * @param index integer index identifying the field
+     * @param type the {@link FieldType} of this field
+     */
+    public Field(int index, FieldType type) {
+        if (type == null) throw new IllegalArgumentException("Field type must not be null");
         this.index = index;
+        this.type = type;
         this.occupation = new Occupation();
         this.next = null;
     }
@@ -47,6 +59,15 @@ public class Field {
         return this.next;
     }
 
+    public FieldType getType() {
+        return this.type;
+    }
+
+    public boolean isHouse() { return this.type == FieldType.HOUSE; }
+    public boolean isStart() { return this.type == FieldType.START; }
+    public boolean isGoal() { return this.type == FieldType.GOAL; }
+    public boolean isNormal() { return this.type == FieldType.NORMAL; }
+
     /**
      * Get this field's index as assigned by the {@link GameManager}.
      * For regular board fields this will be a non-negative index (0..N-1).
@@ -71,8 +92,7 @@ public class Field {
         if (numSteps < 0) throw new IllegalArgumentException("numSteps must be >= 0");
         Field current = this;
         for (int i = 0; i < numSteps; i++) {
-            if (current == null) return null;
-            current = current.next;
+            current = current.next; // boards are expected to be fully linked; nulls are not allowed
         }
         return current;
     }
@@ -93,7 +113,7 @@ public class Field {
      * @throws IllegalArgumentException if different player's figures occupy this field
      */
     public void addFigure(GameFigure figure) {
-        if (figure == null) return;
+        if (figure == null) throw new IllegalArgumentException("figure must not be null");
         if (!this.occupation.canAccept(figure.getOwner())) {
             for (GameFigure fig : this.occupation.getFigures()) {
                 fig.moveToHouse();

@@ -34,13 +34,13 @@ public class App {
                 GameFigure fig = figs[f];
                 Field figField = fig.getField();
                 int fieldIndex = -1;
-                if (figField != null) {
+                if (!figField.isHouse()) {
                     for (int k = 0; k < fields.length; k++) {
                         if (fields[k] == figField) { fieldIndex = k; break; }
                     }
                 }
                 String pos;
-                if (figField == null) {
+                if (figField.isHouse()) {
                     pos = "home";
                 } else if (fieldIndex >= 0) {
                     pos = String.valueOf(fieldIndex);

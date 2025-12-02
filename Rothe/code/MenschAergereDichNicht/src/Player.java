@@ -42,7 +42,8 @@ public abstract class Player {
         // Find indices of figures that are on the board (not in house)
         java.util.List<Integer> movableFigureIndices = new java.util.ArrayList<>();
         for (int i = 0; i < this.figures.length; i++) {
-            if (this.figures[i].getField() != null) {
+            Field f = this.figures[i].getField();
+            if (!f.isHouse()) {
                 movableFigureIndices.add(i);
             }
         }
@@ -89,7 +90,8 @@ public abstract class Player {
     public int getFiguresInHouse() {
         int count = 0;
         for (GameFigure figure : this.figures) {
-            if (figure.getField() == null) {
+            Field f = figure.getField();
+            if (f.isHouse()) {
                 count++;
             }
         }
@@ -98,7 +100,8 @@ public abstract class Player {
 
     public void moveFigureOutOfHouse() {
         for (GameFigure figure : this.figures) {
-            if (figure.getField() == null) {
+            Field f = figure.getField();
+            if (f.isHouse()) {
                 figure.setField(this.startField);
                 return;
             }

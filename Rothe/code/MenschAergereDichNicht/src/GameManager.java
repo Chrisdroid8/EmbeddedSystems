@@ -4,8 +4,16 @@ public class GameManager {
 
     public GameManager() {
         this.fields = new Field[20];
-            for (int i = 0; i < fields.length; i++) {
-            fields[i] = new Field(i);
+        int playersCount = 4;
+        // Precompute start indices so we can assign START type while creating fields
+        int[] startIndices = new int[playersCount];
+        for (int p = 0; p < playersCount; p++) {
+            startIndices[p] = p * (fields.length / playersCount);
+        }
+        for (int i = 0; i < fields.length; i++) {
+            boolean isStart = false;
+            for (int s : startIndices) if (s == i) { isStart = true; break; }
+            fields[i] = new Field(i, isStart ? FieldType.START : FieldType.NORMAL);
         }
 
         // Link fields into a circular list: each field's next points to the following field,
@@ -14,7 +22,7 @@ public class GameManager {
             Field next = fields[(i + 1) % fields.length];
             fields[i].setNext(next);
         }
-        this.players = new Player[4];
+        this.players = new Player[playersCount];
         for (int p = 0; p < players.length; p++) {
             if (fields.length % players.length != 0) {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
