@@ -53,6 +53,10 @@ public class GameManager {
         resetGame();
     }
 
+    public void runGame() {
+        
+    }
+
     private void resetGame() {
         for (Field field : fields) {
             field.clearOccupant();
