@@ -4,7 +4,7 @@ public class App {
 
         GameManager manager = new GameManager();
         printGameState(manager);
-
+        
     }
 
     private static void printGameState(GameManager manager) {

@@ -1,11 +1,10 @@
-import java.util.Scanner;
-
+// uses GameManager.SCANNER for console input
 /**
  * A keyboard-controlled player.
  * Prompts the user via console to choose a figure (1..numFigures).
  */
 public class PlayerKeyboard extends Player {
-    private final Scanner scanner;
+    // no per-instance scanner: reuse shared GameManager.SCANNER
 
     /**
      * Create a keyboard player.
@@ -16,7 +15,6 @@ public class PlayerKeyboard extends Player {
      */
     public PlayerKeyboard(String name, int numFigures, Field startField) {
         super(name, numFigures, startField);
-        this.scanner = new Scanner(System.in);
     }
 
     /**
@@ -27,16 +25,29 @@ public class PlayerKeyboard extends Player {
      * @return one of the indices from movableIndices
      */
     @Override
-    public int chooseFigure(int[] movableIndices) {
-        if (movableIndices.length == 0) {
+    protected int chooseFigure(GameFigure[] movableFigures) {
+        if (movableFigures == null || movableFigures.length == 0) {
             System.out.println(this.getName() + " has no movable figures.");
             return -1;
+        }
+
+        // Map movable figures to their indices within this player's figure array
+        int[] movableIndices = new int[movableFigures.length];
+        GameFigure[] all = this.getFigures();
+        for (int i = 0; i < movableFigures.length; i++) {
+            GameFigure mf = movableFigures[i];
+            int found = -1;
+            for (int j = 0; j < all.length; j++) {
+                if (all[j] == mf) { found = j; break; }
+            }
+            if (found == -1) throw new IllegalStateException("Movable figure not owned by player");
+            movableIndices[i] = found;
         }
 
         System.out.print(this.getName() + ", choose a figure (");
         for (int i = 0; i < movableIndices.length; i++) {
             if (i > 0) System.out.print(", ");
-            System.out.print(movableIndices[i] + 1); // Show 1-based figure numbers
+            System.out.print(movableIndices[i] + 1); // display 1-based
         }
         System.out.println("):");
         for (int i = 0; i < movableIndices.length; i++) {
@@ -45,16 +56,12 @@ public class PlayerKeyboard extends Player {
 
         while (true) {
             System.out.print("> ");
+            String line = GameManager.SCANNER.nextLine();
             try {
-                int choice = Integer.parseInt(scanner.nextLine());
-                
-                // Check if choice is one of the movable figure indices (1-based input)
+                int choice = Integer.parseInt(line.trim());
                 for (int idx : movableIndices) {
-                    if (choice == idx + 1) { // idx + 1 because we want 1-based input
-                        return idx; // Return 0-based index
-                    }
+                    if (choice == idx + 1) return idx; // return 0-based index
                 }
-                
                 System.out.print("Invalid choice. Please choose from: ");
                 for (int i = 0; i < movableIndices.length; i++) {
                     if (i > 0) System.out.print(", ");

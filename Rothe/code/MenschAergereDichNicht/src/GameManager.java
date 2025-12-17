@@ -2,17 +2,33 @@ public class GameManager {
     private final Field[] fields;
     private final Player[] players;
     private final I_RuleSet ruleSet;
-    private static final int PLAYER_COUNT_MAX = 4;
+    private static final int PLAYER_COUNT_MAX = 10;
+    private static final int FIGURES_PER_PLAYER_MAX = 20;
+    private final int playerCount; // actual number of players chosen at runtime
+    // Shared scanner for all interactive console input. Do not close directly; closed via shutdown hook.
+    public static final java.util.Scanner SCANNER = new java.util.Scanner(System.in);
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                SCANNER.close();
+            } catch (Exception ignored) {
+            }
+        }));
+    }
 
     public GameManager() {
-        this.ruleSet = new RuleSetStandard(PLAYER_COUNT_MAX);
-        this.initialInput();
+        // ask user for desired number of players (bounded by PLAYER_COUNT_MAX)
+        this.playerCount = this.initialPlayersInput();
+        // ask user how many figures per player
+        int figuresPerPlayer = this.initialFiguresInput();
+        this.ruleSet = new RuleSetStandard(this.playerCount);
         int numFields = this.ruleSet.getNumFields();
         this.fields = new Field[numFields];
         // Precompute start indices so we can assign START type while creating fields
-        int[] startIndices = new int[PLAYER_COUNT_MAX];
-        for (int p = 0; p < PLAYER_COUNT_MAX; p++) {
-            startIndices[p] = p * (fields.length / PLAYER_COUNT_MAX);
+        int[] startIndices = new int[this.playerCount];
+        for (int p = 0; p < this.playerCount; p++) {
+            startIndices[p] = p * (fields.length / this.playerCount);
         }
         for (int i = 0; i < fields.length; i++) {
             boolean isStart = false;
@@ -26,13 +42,13 @@ public class GameManager {
             Field next = fields[(i + 1) % fields.length];
             fields[i].setNext(next);
         }
-        this.players = new Player[PLAYER_COUNT_MAX];
+        this.players = new Player[this.playerCount];
         for (int p = 0; p < players.length; p++) {
             if (fields.length % players.length != 0) {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
             }
             int startIndex = p * (fields.length / players.length);
-            players[p] = new PlayerKeyboard("Player " + (p + 1), 4, fields[startIndex]);
+            players[p] = new PlayerKeyboard("Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
         }
         resetGame();
     }
@@ -49,24 +65,16 @@ public class GameManager {
         }
     }
 
-    private  void initialInput() {
-        try (java.util.Scanner scanner = new java.util.Scanner(System.in)) {
-            int numPlayers = -1;
-            while (numPlayers < 1 || numPlayers > PLAYER_COUNT_MAX) {
-                System.out.print("Enter number of players (1-" + PLAYER_COUNT_MAX + "): ");
-                String line = scanner.nextLine();
-                try {
-                    numPlayers = Integer.parseInt(line.trim());
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
-                    continue;
-                }
-                if (numPlayers < 1 || numPlayers > PLAYER_COUNT_MAX) {
-                    System.out.println("Please enter a number between 1 and " + PLAYER_COUNT_MAX + ".");
-                }
-            }
-            System.out.println("Using " + numPlayers + " player(s). Note: game currently initialized for " + PLAYER_COUNT_MAX + " players.");
-        }
+    private int initialPlayersInput() {
+        int numPlayers = UserInput.readIntInRange("Enter number of players (2-" + PLAYER_COUNT_MAX + "): ", 2, PLAYER_COUNT_MAX, SCANNER);
+        System.out.println("Using " + numPlayers + " player(s).");
+        return numPlayers;
+    }
+
+    private int initialFiguresInput() {
+        int numFigures = UserInput.readIntInRange("Enter number of figures per player (1-" + FIGURES_PER_PLAYER_MAX + "): ", 1, FIGURES_PER_PLAYER_MAX, SCANNER);
+        System.out.println("Using " + numFigures + " figures per player.");
+        return numFigures;
     }
 
     public Field[] getFields() {
