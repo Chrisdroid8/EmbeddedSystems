@@ -7,6 +7,7 @@ public abstract class Player {
     private final String name;
     private final GameFigure[] figures;
     private final Field startField;
+    private final Field[] goalFields;
     private final int numFigures;
     private final I_Rollable die;
 
@@ -26,6 +27,12 @@ public abstract class Player {
         this.figures = new GameFigure[this.numFigures];
         for (int i = 0; i < this.numFigures; i++) {
             this.figures[i] = new GameFigure(this);
+        }
+        // Create goal fields for this player: one goal field per figure
+        this.goalFields = new Field[this.numFigures];
+        for (int i = 0; i < this.numFigures; i++) {
+            // Use negative indices for player-specific special fields
+            this.goalFields[i] = new Field(-100 - i, FieldType.GOAL);
         }
         this.die = new Die6();
     }
@@ -85,6 +92,27 @@ public abstract class Player {
 
     public Field getStartField() {
         return startField;
+    }
+
+    /**
+     * Get the goal fields belonging to this player.
+     * There is exactly one goal field per figure owned by the player.
+     *
+     * @return array of goal {@link Field} objects
+     */
+    public Field[] getGoalFields() {
+        return this.goalFields.clone();
+    }
+
+    /**
+     * Convenience accessor for a single goal field by index.
+     *
+     * @param index 0-based goal index
+     * @return the goal {@link Field}
+     * @throws IndexOutOfBoundsException when index is out of range
+     */
+    public Field getGoalField(int index) {
+        return this.goalFields[index];
     }
 
     public int getFiguresInHouse() {

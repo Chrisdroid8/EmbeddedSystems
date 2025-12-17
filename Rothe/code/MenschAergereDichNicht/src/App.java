@@ -3,23 +3,8 @@ public class App {
         System.out.println("Demo: GameManager & relations");
 
         GameManager manager = new GameManager();
-
-        Player[] players = manager.getPlayers();
-        // GameFigure[] figuresOfP0 = players[0].getFigures();
-        // Field[] fields = manager.getFields();
-
-        printGameState(manager);
-        players[0].moveFigureOutOfHouse();
-        printGameState(manager);
-        players[1].moveFigureOutOfHouse();
-        printGameState(manager);
-        players[1].moveFigureOutOfHouse();
         printGameState(manager);
 
-        players[0].getFigures()[players[0].chooseMovableFigure()].move(players[0].roll());
-        printGameState(manager);
-        players[1].getFigures()[players[1].chooseMovableFigure()].move(players[1].roll());
-        printGameState(manager);
     }
 
     private static void printGameState(GameManager manager) {
