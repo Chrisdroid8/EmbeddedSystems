@@ -5,9 +5,9 @@ public class GameFigure {
 
     public GameFigure(Player owner) {
         this.owner = owner;
-        this.house = new Field(-1);
+        this.house = new Field(-1, FieldType.HOUSE);
         this.house.setNext(this.owner.getStartField());
-        this.field = house;
+        this.field = this.house;
     }
 
     public void prepareForNewGame() {
@@ -18,11 +18,8 @@ public class GameFigure {
         return this.owner;
     }
 
-    /** Returns the Field this figure stands on (may be null). */
+    /** Returns the Field this figure stands on (house fields are returned as their Field with type HOUSE). */
     public Field getField() {
-        if (this.field == house) {
-            return null;
-        }
         return this.field;
     }
 
@@ -34,38 +31,40 @@ public class GameFigure {
      */
     public void setField(Field newField) {
         if (this.field == newField) return;
-        if (this.field != null) {
-            this.field.removeFigure(this);
-        }
+        // remove from old field
+        this.field.removeFigure(this);
         this.field = newField;
-        if (this.field != null) {
-            this.field.addFigure(this);
-        }
+        this.field.addFigure(this);
     }
 
-    public void setToHouse() {
+    public void moveToHouse() {
         this.setField(this.house);
+    }
+
+    public void moveOutOfHouse() {
+        this.setField(this.owner.getStartField());
     }
 
     /** Clear used by Field when removing occupant. */
     public void clearField() {
-        if (this.field == null) return;
-        this.field.clearOccupant(false);
-        this.field = null;
+        // Called when a field clears its occupants: move this figure back to its house
+        this.field = this.house;
     }
 
     /** Move this figure forward by the given number of fields. This will update both sides (old and new fields). */
     public void move(int numSteps) {
-        if(this.field == null) {
-            throw new IllegalStateException("Figure is not on the board");
+        if (this.field.isHouse()) {
+            throw new IllegalStateException("Figure is in house and cannot move");
         }
         // get the field in numSteps ahead
         Field newField = this.field.getNext(numSteps);
-        // remove from old field
-        this.field.clearOccupant(false);
+        // remove from old field (clear occupants on this single figure)
+        if (!this.field.isHouse()) {
+            this.field.removeFigure(this);
+        }
         this.field = newField;
-        // set on new field if it exists (it has to exist, if it doesn't there is a programming error)
-        if (this.field != null) {
+        // set on new field if it exists and is not a house
+        if (!this.field.isHouse()) {
             this.field.addFigure(this);
         }
     }
