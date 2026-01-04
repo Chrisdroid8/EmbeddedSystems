@@ -3,24 +3,8 @@ public class App {
         System.out.println("Demo: GameManager & relations");
 
         GameManager manager = new GameManager();
-
-        Player[] players = manager.getPlayers();
-        GameFigure[] figuresOfP0 = players[0].getFigures();
-        Field[] fields = manager.getFields();
-
         printGameState(manager);
-        fields[0].addFigure(figuresOfP0[0]);
-        printGameState(manager);
-        fields[0].addFigure(figuresOfP0[1]);
-        printGameState(manager);
-        figuresOfP0[1].move(2);
-        printGameState(manager);
-        figuresOfP0[2].setField(fields[0]);
-        printGameState(manager);
-        figuresOfP0[2].move(1);
-        printGameState(manager);
-        figuresOfP0[2].move(1);
-        printGameState(manager);
+        
     }
 
     private static void printGameState(GameManager manager) {
@@ -35,13 +19,13 @@ public class App {
                 GameFigure fig = figs[f];
                 Field figField = fig.getField();
                 int fieldIndex = -1;
-                if (figField != null) {
+                if (!figField.isHouse()) {
                     for (int k = 0; k < fields.length; k++) {
                         if (fields[k] == figField) { fieldIndex = k; break; }
                     }
                 }
                 String pos;
-                if (figField == null) {
+                if (figField.isHouse()) {
                     pos = "home";
                 } else if (fieldIndex >= 0) {
                     pos = String.valueOf(fieldIndex);
