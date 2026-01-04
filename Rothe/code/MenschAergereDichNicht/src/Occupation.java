@@ -31,7 +31,7 @@ public class Occupation {
     }
 
     public void addFigure(GameFigure figure) {
-        if (figure == null) return;
+        if (figure == null) throw new IllegalArgumentException("figure must not be null");
         if (!this.figures.isEmpty() && !this.player.equals(figure.getOwner())) {
             throw new IllegalArgumentException(
                 "Cannot add figure from " + figure.getOwner().getName() +
