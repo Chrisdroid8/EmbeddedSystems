@@ -1,0 +1,57 @@
+<mxfile host="65bd71144e">
+    <diagram id="O5keox9X5ZUuX6azmc74" name="Page-1">
+        <mxGraphModel dx="672" dy="1724" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="timerTask" value="Timer" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="-70" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="stateEnum" value="CLEAR&amp;nbsp;&lt;div&gt;RUNNING&amp;nbsp;&lt;/div&gt;&lt;div&gt;STOPPED&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;align=left;spacingLeft=6;" vertex="1" parent="1">
+                    <mxGeometry x="390" y="240" width="180" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="inheritance" style="endArrow=block;endFill=0;strokeColor=#000000;exitX=0.5;exitY=0;exitDx=0;exitDy=0;dashed=1;rounded=0;curved=0;arcSize=20;startArrow=none;startFill=0;strokeWidth=1;endSize=16;" edge="1" parent="1" source="13">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="260" y="160" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="13" value="App" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="200" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="+ App()&lt;div&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;+ update(): void&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;+ start(): void&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;+ stop(): void&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;+ reset(): void&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;+ getTime(): float&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=6;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="280" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="- cnt: DWORD&lt;br&gt;- T: float&lt;br&gt;- state: State" style="rounded=0;align=left;spacingLeft=6;fontColor=default;spacing=2;fontSize=12;whiteSpace=wrap;html=1;spacingBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="230" width="180" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: rgb(63, 63, 63);&quot;&gt;State&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="390" y="190" width="180" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="&lt;i&gt;Task&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="100" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=diamond;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endFill=1;endSize=16;" edge="1" parent="1" source="19" target="26">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="230" y="220" as="sourcePoint"/>
+                        <mxPoint x="260.0000000000001" y="49.99999999999977" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=diamond;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;endFill=0;strokeWidth=1;endSize=16;" edge="1" parent="1" source="13" target="18">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="230" y="220" as="sourcePoint"/>
+                        <mxPoint x="280" y="170" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="&lt;i&gt;+ update(): void&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=6;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="130" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="- cycleTime: DWORD&lt;br&gt;&lt;div&gt;...&lt;/div&gt;" style="rounded=0;align=left;spacingLeft=6;fontColor=default;spacing=2;fontSize=12;whiteSpace=wrap;html=1;spacingBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="-40" width="180" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="+ enablePWM()&lt;div&gt;+ setPWM()&lt;/div&gt;&lt;div&gt;...&lt;/div&gt;" style="rounded=0;align=left;spacingLeft=6;fontColor=default;spacing=2;fontSize=12;whiteSpace=wrap;html=1;spacingBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="170" width="180" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
