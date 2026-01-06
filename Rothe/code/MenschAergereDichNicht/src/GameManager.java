@@ -69,50 +69,58 @@ public class GameManager {
             Player currentPlayer = players[currentPlayerIndex];
             visual.displayCurrentPlayer(currentPlayer);
             
-            // Check if player can roll
-            if (!ruleSet.checkRoll(currentPlayer)) {
-                visual.displayMessage(currentPlayer.getName() + " cannot roll.");
-                currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
-                continue;
+            boolean turnComplete = false;
+            
+            // Keep rolling until the turn is complete
+            while (!turnComplete) {
+                // Check if player can roll
+                if (!ruleSet.checkRoll(currentPlayer)) {
+                    visual.displayMessage(currentPlayer.getName() + " cannot roll anymore.");
+                    turnComplete = true;
+                    break;
+                }
+                
+                // Roll the die
+                int rollValue = currentPlayer.roll();
+                visual.displayRoll(currentPlayer, rollValue);
+                
+                // Check which figures can move
+                java.util.List<GameFigure> movableFigures = ruleSet.checkMove(currentPlayer, rollValue);
+                
+                if (movableFigures.isEmpty()) {
+                    visual.displayMessage(currentPlayer.getName() + " has no movable figures with this roll.");
+                    // Continue rolling if allowed (checkRoll will handle the 3-roll limit)
+                    continue;
+                }
+                
+                // Player chooses a figure to move
+                GameFigure[] movableArray = movableFigures.toArray(new GameFigure[0]);
+                int chosenFigureIndex = currentPlayer.chooseFigure(movableArray);
+                
+                if (chosenFigureIndex < 0 || chosenFigureIndex >= currentPlayer.getFigures().length) {
+                    // This should never happen if chooseFigure is implemented correctly
+                    visual.displayMessage("Invalid figure choice.");
+                    turnComplete = true;
+                    break;
+                }
+                
+                GameFigure chosenFigure = currentPlayer.getFigures()[chosenFigureIndex];
+                
+                // Move the figure
+                if (chosenFigure.getField().isHouse()) {
+                    chosenFigure.moveOutOfHouse();
+                    visual.displayMove(currentPlayer, chosenFigure, 0);
+                } else {
+                    chosenFigure.move(rollValue);
+                    visual.displayMove(currentPlayer, chosenFigure, rollValue);
+                }
+                
+                // Display updated game state
+                visual.displayGameState(fields, players);
+                
+                // After a successful move, the turn is complete
+                turnComplete = true;
             }
-            
-            // Roll the die
-            int rollValue = currentPlayer.roll();
-            visual.displayRoll(currentPlayer, rollValue);
-            
-            // Check which figures can move
-            java.util.List<GameFigure> movableFigures = ruleSet.checkMove(currentPlayer, rollValue);
-            
-            if (movableFigures.isEmpty()) {
-                visual.displayMessage(currentPlayer.getName() + " has no movable figures.");
-                currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
-                continue;
-            }
-            
-            // Player chooses a figure to move
-            GameFigure[] movableArray = movableFigures.toArray(new GameFigure[0]);
-            int chosenFigureIndex = currentPlayer.chooseFigure(movableArray);
-            
-            if (chosenFigureIndex < 0 || chosenFigureIndex >= currentPlayer.getFigures().length) {
-                // This should never happen if chooseFigure is implemented correctly
-                visual.displayMessage("Invalid figure choice.");
-                currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
-                continue;
-            }
-            
-            GameFigure chosenFigure = currentPlayer.getFigures()[chosenFigureIndex];
-            
-            // Move the figure
-            if (chosenFigure.getField().isHouse()) {
-                chosenFigure.moveOutOfHouse();
-                visual.displayMove(currentPlayer, chosenFigure, 0);
-            } else {
-                chosenFigure.move(rollValue);
-                visual.displayMove(currentPlayer, chosenFigure, rollValue);
-            }
-            
-            // Display updated game state
-            visual.displayGameState(fields, players);
             
             // Check for win
             if (ruleSet.checkWin(currentPlayer)) {
