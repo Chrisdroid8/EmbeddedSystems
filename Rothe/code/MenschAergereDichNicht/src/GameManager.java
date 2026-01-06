@@ -2,6 +2,7 @@ public class GameManager {
     private final Field[] fields;
     private final Player[] players;
     private final I_RuleSet ruleSet;
+    private final I_Visual visual;
     private static final int PLAYER_COUNT_MAX = 10;
     private static final int FIGURES_PER_PLAYER_MAX = 20;
     private final int playerCount; // actual number of players chosen at runtime
@@ -22,6 +23,7 @@ public class GameManager {
         this.playerCount = this.initialPlayersInput();
         // ask user how many figures per player
         int figuresPerPlayer = this.initialFiguresInput();
+        this.visual = new VisualASCII();
         this.ruleSet = new RuleSetStandard(this.playerCount);
         int numFields = this.ruleSet.getNumFields();
         this.fields = new Field[numFields];
@@ -51,10 +53,78 @@ public class GameManager {
             players[p] = new PlayerKeyboard("Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
         }
         resetGame();
+        runGame();
     }
 
     public void runGame() {
+        visual.displayMessage("Game Started!");
+        visual.displayGameState(fields, players);
         
+        boolean gameWon = false;
+        Player winner = null;
+        int currentPlayerIndex = 0;
+        
+        // Main game loop
+        while (!gameWon) {
+            Player currentPlayer = players[currentPlayerIndex];
+            visual.displayCurrentPlayer(currentPlayer);
+            
+            // Check if player can roll
+            if (!ruleSet.checkRoll(currentPlayer)) {
+                visual.displayMessage(currentPlayer.getName() + " cannot roll.");
+                currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+                continue;
+            }
+            
+            // Roll the die
+            int rollValue = currentPlayer.roll();
+            visual.displayRoll(currentPlayer, rollValue);
+            
+            // Check which figures can move
+            java.util.List<GameFigure> movableFigures = ruleSet.checkMove(currentPlayer, rollValue);
+            
+            if (movableFigures.isEmpty()) {
+                visual.displayMessage(currentPlayer.getName() + " has no movable figures.");
+                currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+                continue;
+            }
+            
+            // Player chooses a figure to move
+            GameFigure[] movableArray = movableFigures.toArray(new GameFigure[0]);
+            int chosenFigureIndex = currentPlayer.chooseFigure(movableArray);
+            
+            if (chosenFigureIndex < 0 || chosenFigureIndex >= currentPlayer.getFigures().length) {
+                // This should never happen if chooseFigure is implemented correctly
+                visual.displayMessage("Invalid figure choice.");
+                currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+                continue;
+            }
+            
+            GameFigure chosenFigure = currentPlayer.getFigures()[chosenFigureIndex];
+            
+            // Move the figure
+            if (chosenFigure.getField().isHouse()) {
+                chosenFigure.moveOutOfHouse();
+                visual.displayMove(currentPlayer, chosenFigure, 0);
+            } else {
+                chosenFigure.move(rollValue);
+                visual.displayMove(currentPlayer, chosenFigure, rollValue);
+            }
+            
+            // Display updated game state
+            visual.displayGameState(fields, players);
+            
+            // Check for win
+            if (ruleSet.checkWin(currentPlayer)) {
+                gameWon = true;
+                winner = currentPlayer;
+            } else {
+                // Next player's turn
+                currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+            }
+        }
+        
+        visual.displayWinner(winner);
     }
 
     private void resetGame() {
@@ -71,13 +141,13 @@ public class GameManager {
 
     private int initialPlayersInput() {
         int numPlayers = UserInput.readIntInRange("Enter number of players (2-" + PLAYER_COUNT_MAX + "): ", 2, PLAYER_COUNT_MAX, SCANNER);
-        System.out.println("Using " + numPlayers + " player(s).");
+        System.out.println("Using " + numPlayers + " player.");
         return numPlayers;
     }
 
     private int initialFiguresInput() {
         int numFigures = UserInput.readIntInRange("Enter number of figures per player (1-" + FIGURES_PER_PLAYER_MAX + "): ", 1, FIGURES_PER_PLAYER_MAX, SCANNER);
-        System.out.println("Using " + numFigures + " figures per player.");
+        System.out.println("Using " + numFigures + " figure(s) per player.");
         return numFigures;
     }
 

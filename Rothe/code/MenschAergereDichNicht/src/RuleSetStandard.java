@@ -15,8 +15,8 @@ public class RuleSetStandard implements I_RuleSet {
     }
 
     @Override
-    public boolean checkRoll(Player player, int rollValue) {
-        // A player cannot rill if a figure was moved in the last action
+    public boolean checkRoll(Player player) {
+        // A player cannot roll if a figure was moved in the last action
         if (this.lastActionType == ActionType.MOVE) {
             return false;
         }
