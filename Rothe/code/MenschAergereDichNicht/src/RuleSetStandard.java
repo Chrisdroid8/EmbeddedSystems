@@ -75,8 +75,11 @@ public class RuleSetStandard implements I_RuleSet {
                 if (rollValue == 6) {
                     movableFigures.add(figure);
                 }
-            } else {
-                // Figures on the board can always move
+            } 
+            else if (figureField.getDestination(rollValue, true).getOccupant().getOwner() != figure.getOwner()){
+                movableFigures.add(figure);
+            }
+            else if (figureField.getDestination(rollValue, false).getOccupant().getOwner() != figure.getOwner()){
                 movableFigures.add(figure);
             }
         }
@@ -101,6 +104,19 @@ public class RuleSetStandard implements I_RuleSet {
 
     @Override
     public int getNumFields() {
-        return NUM_FIELDS_PER_PLAYER * playerCount;
+        if (playerCount >= 1 && playerCount <= 4){
+            return 40;
+        }
+        else if (playerCount >= 5 && playerCount <= 6){
+            return 8*6;
+        }
+        else{
+            throw new IllegalArgumentException("Ungültige Spieleranzahl");        
+        }
+    }
+
+    @Override
+    public void resetLastAction(){
+        this.lastActionType = ActionType.NONE;
     }
 }
