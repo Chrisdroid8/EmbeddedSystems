@@ -3,8 +3,8 @@ public class GameManager {
     private final Player[] players;
     private final I_RuleSet ruleSet;
     private final I_Visual visual;
-    private static final int PLAYER_COUNT_MAX = 10;
-    private static final int FIGURES_PER_PLAYER_MAX = 20;
+    private static final int PLAYER_COUNT_MAX = 4;
+    private static final int FIGURES_PER_PLAYER_MAX = 16;
     private final int playerCount; // actual number of players chosen at runtime
     // Shared scanner for all interactive console input. Do not close directly; closed via shutdown hook.
     public static final java.util.Scanner SCANNER = new java.util.Scanner(System.in);
@@ -25,6 +25,8 @@ public class GameManager {
         int figuresPerPlayer = this.initialFiguresInput();
         this.visual = new VisualASCII();
         this.ruleSet = new RuleSetStandard(this.playerCount);
+
+        //int numFields = this.ruleSet.getNumFields();
         int numFields = this.ruleSet.getNumFields();
         this.fields = new Field[numFields];
         // Precompute start indices so we can assign START type while creating fields
@@ -56,7 +58,7 @@ public class GameManager {
         runGame();
     }
 
-    public void runGame() {
+    public void runGame() { // ToDo
         visual.displayMessage("Game Started!");
         visual.displayGameState(fields, players);
         
@@ -66,6 +68,7 @@ public class GameManager {
         
         // Main game loop
         while (!gameWon) {
+            ruleSet.resetLastAction();
             Player currentPlayer = players[currentPlayerIndex];
             visual.displayCurrentPlayer(currentPlayer);
             
