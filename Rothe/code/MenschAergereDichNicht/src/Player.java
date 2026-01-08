@@ -74,7 +74,7 @@ public abstract class Player {
         return this.goalFields;
     }
 
-    public int getFiguresInHouse() {
+    public int getNumFiguresInHouse() {
         int count = 0;
         for (GameFigure figure : this.figures) {
             Field f = figure.getField();
@@ -95,13 +95,10 @@ public abstract class Player {
         }
     }
 
-    public Field[] getHouseFields(){
-         Field[] houseFields = new Field[this.figures.length];
-
-        for (int i = 0; i < this.figures.length; i++) {
-            houseFields[i] = this.figures[i].getHouseField();
+    public Field getHouseField(int i) {
+        if( i<0 || i>=this.figures.length){
+            throw new IllegalArgumentException("Index out of bounds for house fields");
         }
-
-        return houseFields;
+        return this.figures[i].getHouseField();
     }
 }
