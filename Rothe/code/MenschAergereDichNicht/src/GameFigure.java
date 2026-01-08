@@ -10,6 +10,10 @@ public class GameFigure {
         this.field = this.house;
     }
 
+    public Field getHouseField(){
+        return house;
+    }
+
     public void prepareForNewGame() {
         this.setField(house);
     }
@@ -56,8 +60,15 @@ public class GameFigure {
         if (this.field.isHouse()) {
             throw new IllegalStateException("Figure is in house and cannot move");
         }
+        Field newField;
         // get the field in numSteps ahead
-        Field newField = this.field.getNext(numSteps);
+        newField = this.field.getDestination(numSteps, true);
+        if (newField == this.field){
+            newField = this.field.getDestination(numSteps, false);
+        }
+
+        
+        
         // remove from old field (clear occupants on this single figure)
         if (!this.field.isHouse()) {
             this.field.removeFigure(this);

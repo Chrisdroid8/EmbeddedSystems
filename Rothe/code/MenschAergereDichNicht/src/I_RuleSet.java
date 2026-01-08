@@ -36,4 +36,11 @@ public interface I_RuleSet {
      * @return the number of board fields
      */
     int getNumFields();
+
+
+    /**
+     * Resets the Last action per Turn
+     * 
+     */
+    void resetLastAction();
 }
