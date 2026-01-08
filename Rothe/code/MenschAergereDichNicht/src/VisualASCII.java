@@ -38,20 +38,19 @@ public class VisualASCII implements I_Visual {
         System.out.println(SEPARATOR + "\n");
     }
     
-
     public void displayPlayboard(Field[] fields, Player[] players){
         String[][] boardLegende = {
-            {"H30", "H32", "-", "-", "F18", "F19", "F20", "-", "-", "H11", "H10"},
-            {"H31", "H33", "-", "-", "F17", "G10", "F21", "-", "-", "H13", "H12"},
-            {"-", "-", "-", "-", "F16", "G11", "F22", "-", "-", "-", "-"},
-            {"-", "-", "-", "-", "F15", "G12", "F23", "-", "-", "-", "-"},
+            {"H30", "H32", "-",   "-",   "F18", "F19", "F20", "-",   "-",   "H11", "H10"},
+            {"H31", "H33", "-",   "-",   "F17", "G10", "F21", "-",   "-",   "H13", "H12"},
+            {"-",   "-",   "-",   "-",   "F16", "G11", "F22", "-",   "-",   "-",   "-"  },
+            {"-",   "-",   "-",   "-",   "F15", "G12", "F23", "-",   "-",   "-",   "-"  },
             {"F10", "F11", "F12", "F13", "F14", "G13", "F24", "F25", "F26", "F27", "F28"},
-            {"F9", "G30", "G31", "G32", "G33", "-", "G23", "G22", "G21", "G20", "F29"},
-            {"F8", "F7", "F6", "F5", "F4", "G03", "F34", "F33", "F32", "F31", "F30"},
-            {"-", "-", "-", "-", "F3", "G02", "F35", "-", "-", "-", "-"},
-            {"-", "-", "-", "-", "F2", "G01", "F36", "-", "-", "-", "-"},
-            {"H02", "H03", "-", "-", "F1", "G00", "F37", "-", "-", "H23", "H21"},
-            {"H00", "H01", "-", "-", "F0", "F39", "F38", "-", "-", "H22", "H20"},
+            {"F9",  "G30", "G31", "G32", "G33", "-",   "G23", "G22", "G21", "G20", "F29"},
+            {"F8",  "F7",  "F6",  "F5",  "F4",  "G03", "F34", "F33", "F32", "F31", "F30"},
+            {"-",   "-",   "-",   "-",   "F3",  "G02", "F35", "-",   "-",   "-",   "-"  },
+            {"-",   "-",   "-",   "-",   "F2",  "G01", "F36", "-",   "-",   "-",   "-"  },
+            {"H02", "H03", "-",   "-",   "F1",  "G00", "F37", "-",   "-",   "H23", "H21"},
+            {"H00", "H01", "-",   "-",   "F0",  "F39", "F38", "-",   "-",   "H22", "H20"},
         };
         Field[][] mappedBoard = new Field[11][11]; // 2D-Array für das Board
 
@@ -80,14 +79,20 @@ public class VisualASCII implements I_Visual {
                             break;
                         }
                         int homeIndex = Character.getNumericValue(cell.charAt(2));
-                        mappedBoard[row][col] = players[playerId].getHouseFields()[homeIndex];
+                        if( homeIndex >= players[playerId].getFigures().length){
+                            break;
+                        }
+                        mappedBoard[row][col] = players[playerId].getHouseField(homeIndex);
                         break;
                     }
 
                     case 'G': {
                         int playerId = Character.getNumericValue(cell.charAt(1));
-                        int goalIndex = Character.getNumericValue(cell.charAt(2));
                         if (playerId >= players.length){
+                            break;
+                        }
+                        int goalIndex = Character.getNumericValue(cell.charAt(2));
+                        if( goalIndex >= players[playerId].getFigures().length){
                             break;
                         }
                         mappedBoard[row][col] = players[playerId].getGoalFields()[goalIndex];
