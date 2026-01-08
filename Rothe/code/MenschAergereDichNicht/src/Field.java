@@ -88,14 +88,25 @@ public class Field {
      * @return the field {@code numSteps} ahead or {@code null} if unavailable
      * @throws IllegalArgumentException when {@code numSteps} is negative
      */
-    public Field getNext(int numSteps) {
+    public Field getDestination(int numSteps, boolean tryGoal) {
         if (numSteps < 0) throw new IllegalArgumentException("numSteps must be >= 0");
         Field current = this;
+        
         for (int i = 0; i < numSteps; i++) {
-            current = current.next; // boards are expected to be fully linked; nulls are not allowed
+            if (current.next.getType() == FieldType.START && tryGoal == true && this.occupation.getPlayer().getStartField()==current.next){
+               current = this.occupation.getPlayer().getGoalFields()[0];
+            }
+            else {
+             
+                current = current.next; // boards are expected to be fully linked; nulls are not allowed
+            }
+        }
+        if (current == null){
+            return this;
         }
         return current;
     }
+
 
     /**
      * Set the next field in sequence. Intended to be used by {@link GameManager} when building the board.
