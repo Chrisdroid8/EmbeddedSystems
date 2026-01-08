@@ -61,6 +61,7 @@ public class GameManager {
     public void runGame() { // ToDo
         visual.displayMessage("Game Started!");
         visual.displayGameState(fields, players);
+        visual.displayPlayboard(fields, players);
         
         boolean gameWon = false;
         Player winner = null;
