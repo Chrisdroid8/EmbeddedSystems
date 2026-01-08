@@ -33,6 +33,9 @@ public abstract class Player {
         for (int i = 0; i < this.numFigures; i++) {
             // Use negative indices for player-specific special fields
             this.goalFields[i] = new Field(-100 - i, FieldType.GOAL);
+            if (i<this.numFigures-1){
+                this.goalFields[i].setNext(this.goalFields[i+1]);
+            }
         }
         this.die = new Die6();
     }
@@ -90,5 +93,15 @@ public abstract class Player {
                 return;
             }
         }
+    }
+
+    public Field[] getHouseFields(){
+         Field[] houseFields = new Field[this.figures.length];
+
+        for (int i = 0; i < this.figures.length; i++) {
+            houseFields[i] = this.figures[i].getHouseField();
+        }
+
+        return houseFields;
     }
 }
