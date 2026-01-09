@@ -116,7 +116,8 @@ public class GameManager {
                 }
                 
                 // Display updated game state
-                visual.displayGameState(fields, players);
+                //visual.displayGameState(fields, players);
+                visual.displayPlayboard(fields, players);
                 break; // End turn after a successful move
             }
             

@@ -28,7 +28,7 @@ public abstract class Player {
         this.numFigures = numFigures;
         this.figures = new GameFigure[this.numFigures];
         for (int i = 0; i < this.numFigures; i++) {
-            this.figures[i] = new GameFigure(this);
+            this.figures[i] = new GameFigure(this, i);
             this.figures[i].moveToHouse();
         }
         // Create goal fields for this player: one goal field per figure
