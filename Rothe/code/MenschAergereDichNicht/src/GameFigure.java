@@ -40,7 +40,7 @@ public class GameFigure {
      * @param newField the field to move to (may be {@code null})
      */
     public void setField(Field newField) {
-        //if (this.field == newField) return;
+        // if (this.field == newField) return;
         // remove from old field
         this.field.removeFigure(this);
         this.field = newField;
