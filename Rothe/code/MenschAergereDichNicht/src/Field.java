@@ -90,21 +90,23 @@ public class Field {
      */
     public Field getDestination(int numSteps, boolean tryGoal) {
         if (numSteps < 0) throw new IllegalArgumentException("numSteps must be >= 0");
-        Field current = this;
-        
+        if (numSteps == 0) return this;
+        if (this.type == FieldType.HOUSE) {
+            return this.occupation.getPlayer().getStartField();
+        }
+
+        Field stepCountingField = this;
         for (int i = 0; i < numSteps; i++) {
-            if (current.next.getType() == FieldType.START && tryGoal == true && this.occupation.getPlayer().getStartField()==current.next){
-               current = this.occupation.getPlayer().getGoalFields()[0];
+            if (tryGoal && stepCountingField.next == this.occupation.getPlayer().getStartField()) {
+                stepCountingField = this.occupation.getPlayer().getGoalFields()[0];
             }
-            else {
-             
-                current = current.next; // boards are expected to be fully linked; nulls are not allowed
-            }
+            else stepCountingField = stepCountingField.next; // boards are expected to be fully linked; nulls are not allowed
         }
-        if (current == null){
-            return this;
+        if (stepCountingField == null) {
+            if (!tryGoal) return this;
+            return this.getDestination(numSteps, false);
         }
-        return current;
+        return stepCountingField;
     }
 
 

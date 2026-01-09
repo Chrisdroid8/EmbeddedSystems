@@ -63,23 +63,33 @@ public class RuleSetStandard implements I_RuleSet {
         }
         
         for (GameFigure figure : player.getFigures()) {
-            Field figureField = figure.getField();
+            Field fieldStartOfMove = figure.getField();
             
             // Skip figures that are already in goal
-            if (figureField.isGoal()) {
+            if (fieldStartOfMove.isGoal()) {
                 continue;
             }
             
             // Figures in house can only move out with a roll of 6
-            if (figureField.isHouse()) {
+            if (fieldStartOfMove.isHouse()) {
                 if (rollValue == 6) {
                     movableFigures.add(figure);
+                    continue;
                 }
-            } 
-            else if (figureField.getDestination(rollValue, true).getOccupant().getOwner() != figure.getOwner()){
-                movableFigures.add(figure);
             }
-            else if (figureField.getDestination(rollValue, false).getOccupant().getOwner() != figure.getOwner()){
+
+            // Check destination field for occupancy
+            Field fieldDestination = fieldStartOfMove.getDestination(rollValue, true);
+            if(fieldDestination.isOccupied()) {
+                // Check if destination is occupied by someone else
+                // This means a player cannot place more than 1 figure on the same field
+                // but can kick opponents' figures
+                if (fieldDestination.getOccupant().getOwner() != figure.getOwner()){
+                    movableFigures.add(figure);
+                    // continue; // Unnecessary
+                }
+            } else {
+                // Destination is free
                 movableFigures.add(figure);
             }
         }
