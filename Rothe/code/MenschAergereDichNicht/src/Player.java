@@ -36,8 +36,8 @@ public abstract class Player {
         for (int i = 0; i < this.numFigures; i++) {
             // Use negative indices for player-specific special fields
             this.goalFields[i] = new Field(-100 - i, FieldType.GOAL);
-            if (i<this.numFigures-1) {
-                this.goalFields[i].setNext(this.goalFields[i+1]);
+            if (i > 1) {
+                this.goalFields[i - 1].setNext(this.goalFields[i]);
             }
         }
         this.die = new Die6();

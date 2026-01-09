@@ -5,7 +5,6 @@
 import java.util.ArrayList;
 import java.util.List;
 public class RuleSetStandard implements I_RuleSet {
-    private static final int NUM_FIELDS_PER_PLAYER = 5;
     private static final int MAX_ROLLS_ALL_IN_HOUSE = 3;
     private final int playerCount;
     private ActionType lastActionType = ActionType.NONE;
@@ -73,7 +72,18 @@ public class RuleSetStandard implements I_RuleSet {
             // Figures in house can only move out with a roll of 6
             if (fieldStartOfMove.isHouse()) {
                 if (rollValue == 6) {
-                    movableFigures.add(figure);
+                    if(fieldStartOfMove.getNext().isOccupied()) {
+                        // Check if destination is occupied by someone else
+                        // This means a player cannot place more than 1 figure on the same field
+                        // but can kick opponents' figures
+                        if (fieldStartOfMove.getNext().getOccupant().getOwner() != figure.getOwner()){
+                            movableFigures.add(figure);
+                        }
+                    }
+                    else{
+                        // Destination is free
+                        movableFigures.add(figure);
+                    }
                 }
                 continue;
             }

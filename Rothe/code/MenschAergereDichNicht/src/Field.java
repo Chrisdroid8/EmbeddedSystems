@@ -92,7 +92,6 @@ public class Field {
         if (numSteps < 0) throw new IllegalArgumentException("numSteps must be >= 0");
         if (numSteps == 0) return this;
         if (this.type == FieldType.HOUSE) {
-            if (this.occupation.getPlayer().getStartField().isOccupied()) return this;
             return this.occupation.getPlayer().getStartField();
         }
 
