@@ -73,14 +73,11 @@ public class GameManager {
             Player currentPlayer = players[currentPlayerIndex];
             visual.displayCurrentPlayer(currentPlayer);
             
-            boolean turnComplete = false;
-            
             // Keep rolling until the turn is complete
-            while (!turnComplete) {
+            while (true) {
                 // Check if player can roll
                 if (!ruleSet.checkRoll(currentPlayer)) {
                     visual.displayMessage(currentPlayer.getName() + " cannot roll anymore.");
-                    turnComplete = true;
                     break;
                 }
                 
@@ -104,7 +101,6 @@ public class GameManager {
                 if (chosenFigureIndex < 0 || chosenFigureIndex >= currentPlayer.getFigures().length) {
                     // This should never happen if chooseFigure is implemented correctly
                     visual.displayMessage("Invalid figure choice.");
-                    turnComplete = true;
                     break;
                 }
                 
@@ -121,9 +117,7 @@ public class GameManager {
                 
                 // Display updated game state
                 visual.displayGameState(fields, players);
-                
-                // After a successful move, the turn is complete
-                turnComplete = true;
+                break; // End turn after a successful move
             }
             
             // Check for win
