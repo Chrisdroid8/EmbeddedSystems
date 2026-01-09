@@ -52,7 +52,7 @@ public class GameManager {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
             }
             int startIndex = p * (fields.length / players.length);
-            players[p] = new PlayerKeyboard("Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
         }
         resetGame();
         runGame();
@@ -116,7 +116,8 @@ public class GameManager {
                 }
                 
                 // Display updated game state
-                visual.displayGameState(fields, players);
+                //visual.displayGameState(fields, players);
+                visual.displayPlayboard(fields, players);
                 break; // End turn after a successful move
             }
             
