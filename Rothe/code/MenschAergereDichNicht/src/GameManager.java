@@ -58,7 +58,7 @@ public class GameManager {
         runGame();
     }
 
-    public void runGame() { // ToDo
+    private void runGame() { // ToDo
         visual.displayMessage("Game Started!");
         visual.displayGameState(fields, players);
         visual.displayPlayboard(fields, players);
