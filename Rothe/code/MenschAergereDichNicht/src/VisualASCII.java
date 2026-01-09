@@ -128,8 +128,8 @@ public class VisualASCII implements I_Visual {
                                 System.out.print(this.getPlayerColor(field.getOccupant().getOwner().getId()));
                                 System.out.print(String.valueOf(field.getOccupant().getId()+1));
                             }else{
-                                System.out.print("H");  
-                            }                  
+                                System.out.print("H");
+                            }
                             System.out.print("\u001B[0m");
                             break;
                         case GOAL:
@@ -138,7 +138,7 @@ public class VisualASCII implements I_Visual {
                                 System.out.print(String.valueOf(field.getOccupant().getId()+1));
                             }else{
                                 System.out.print("G");  
-                            }                  
+                            }
                             System.out.print("\u001B[0m");
                             break;
                         case START:

@@ -3,8 +3,10 @@ public class GameManager {
     private final Player[] players;
     private final I_RuleSet ruleSet;
     private final I_Visual visual;
+    private static final int PLAYER_COUNT_MIN = 4;
     private static final int PLAYER_COUNT_MAX = 4;
-    private static final int FIGURES_PER_PLAYER_MAX = 16;
+    private static final int FIGURES_PER_PLAYER_MIN = 1;
+    private static final int FIGURES_PER_PLAYER_MAX = 4;
     private final int playerCount; // actual number of players chosen at runtime
     // Shared scanner for all interactive console input. Do not close directly; closed via shutdown hook.
     public static final java.util.Scanner SCANNER = new java.util.Scanner(System.in);
@@ -52,7 +54,7 @@ public class GameManager {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
             }
             int startIndex = p * (fields.length / players.length);
-            players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
         }
         resetGame();
         runGame();
@@ -147,13 +149,13 @@ public class GameManager {
     }
 
     private int initialPlayersInput() {
-        int numPlayers = UserInput.readIntInRange("Enter number of players (2-" + PLAYER_COUNT_MAX + "): ", 2, PLAYER_COUNT_MAX, SCANNER);
+        int numPlayers = UserInput.readIntInRange("Enter number of players (" + PLAYER_COUNT_MIN + "-" + PLAYER_COUNT_MAX + "): ", PLAYER_COUNT_MIN, PLAYER_COUNT_MAX, SCANNER);
         System.out.println("Using " + numPlayers + " player.");
         return numPlayers;
     }
 
     private int initialFiguresInput() {
-        int numFigures = UserInput.readIntInRange("Enter number of figures per player (1-" + FIGURES_PER_PLAYER_MAX + "): ", 1, FIGURES_PER_PLAYER_MAX, SCANNER);
+        int numFigures = UserInput.readIntInRange("Enter number of figures per player (" + FIGURES_PER_PLAYER_MIN + "-" + FIGURES_PER_PLAYER_MAX + "): ", FIGURES_PER_PLAYER_MIN, FIGURES_PER_PLAYER_MAX, SCANNER);
         System.out.println("Using " + numFigures + " figure(s) per player.");
         return numFigures;
     }
