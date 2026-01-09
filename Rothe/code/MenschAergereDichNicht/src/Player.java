@@ -10,6 +10,7 @@ public abstract class Player {
     private final Field[] goalFields;
     private final int numFigures;
     private final I_Rollable die;
+    private final int id;
 
     /**
      * Create a player with the given name, number of figures, and starting field.
@@ -20,7 +21,8 @@ public abstract class Player {
      * @param numFigures number of figures this player owns
      * @param startField the starting field for this player's figures
      */
-    protected Player(String name, int numFigures, Field startField) {
+    protected Player(int id,String name, int numFigures, Field startField) {
+        this.id = id;
         this.name = name;
         this.startField = startField;
         this.numFigures = numFigures;
@@ -54,6 +56,10 @@ public abstract class Player {
 
     public int roll() {
         return die.roll();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public GameFigure[] getFigures() {

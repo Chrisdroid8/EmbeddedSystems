@@ -115,7 +115,11 @@ public class VisualASCII implements I_Visual {
                 } else {
                     switch (field.getType()) {
                         case NORMAL:
+                            if (field.isOccupied()){
+                                System.out.print(this.getPlayerColor(field.getOccupant().getOwner().getId()));
+                            }
                             System.out.print("F");
+                            System.out.print("\u001B[0m");
                             break;
                         case HOUSE:
                             System.out.print("H");

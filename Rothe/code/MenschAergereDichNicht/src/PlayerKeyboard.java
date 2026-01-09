@@ -13,8 +13,8 @@ public class PlayerKeyboard extends Player {
      * @param numFigures number of figures this player owns
      * @param startField the starting field for this player's figures
      */
-    public PlayerKeyboard(String name, int numFigures, Field startField) {
-        super(name, numFigures, startField);
+    public PlayerKeyboard(int id, String name, int numFigures, Field startField) {
+        super(id ,name, numFigures, startField);
     }
 
     /**
