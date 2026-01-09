@@ -29,6 +29,13 @@ public class PlayerPC extends Player {
             return -1;
         }
 
+        // Wait 500ms before choosing
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
         // Map movable figures to their indices within this player's figure array
         GameFigure[] all = this.getFigures();
         int randomIndex = (int) (Math.random() * movableFigures.length);
