@@ -63,11 +63,6 @@ public class GameFigure {
         Field newField;
         // get the field in numSteps ahead
         newField = this.field.getDestination(numSteps, true);
-        if (newField == this.field){
-            newField = this.field.getDestination(numSteps, false);
-        }
-
-        
         
         // remove from old field (clear occupants on this single figure)
         if (!this.field.isHouse()) {

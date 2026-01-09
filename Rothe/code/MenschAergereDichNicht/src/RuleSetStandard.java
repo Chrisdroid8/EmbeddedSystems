@@ -74,8 +74,8 @@ public class RuleSetStandard implements I_RuleSet {
             if (fieldStartOfMove.isHouse()) {
                 if (rollValue == 6) {
                     movableFigures.add(figure);
-                    continue;
                 }
+                continue;
             }
 
             // Check destination field for occupancy
