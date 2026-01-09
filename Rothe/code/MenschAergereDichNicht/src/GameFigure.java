@@ -2,8 +2,10 @@ public class GameFigure {
     private final Field house; // house position (starting position)
     private final Player owner; // Player who owns this figure
     private Field field; // current position, null when off-board
+    private int id;
 
-    public GameFigure(Player owner) {
+    public GameFigure(Player owner,int id) {
+        this.id = id;
         this.owner = owner;
         this.house = new Field(-1, FieldType.HOUSE);
         this.house.setNext(this.owner.getStartField());
@@ -12,6 +14,10 @@ public class GameFigure {
 
     public Field getHouseField(){
         return house;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void prepareForNewGame() {
@@ -34,7 +40,7 @@ public class GameFigure {
      * @param newField the field to move to (may be {@code null})
      */
     public void setField(Field newField) {
-        if (this.field == newField) return;
+        //if (this.field == newField) return;
         // remove from old field
         this.field.removeFigure(this);
         this.field = newField;
