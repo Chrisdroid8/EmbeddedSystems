@@ -97,7 +97,7 @@ public class Field {
 
         Field stepCountingField = this;
         for (int i = 0; i < numSteps; i++) {
-            System.out.println("Count field " + stepCountingField.getIndex());
+            // System.out.println("Count field " + stepCountingField.getIndex());
             if (tryGoal && stepCountingField.next == this.occupation.getPlayer().getStartField()) {
                 stepCountingField = this.occupation.getPlayer().getGoalFields()[0];
             }

@@ -31,7 +31,7 @@ public class PlayerPC extends Player {
 
         // Wait 500ms before choosing
         try {
-            Thread.sleep(500);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
