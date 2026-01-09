@@ -13,8 +13,8 @@ public class PlayerKeyboard extends Player {
      * @param numFigures number of figures this player owns
      * @param startField the starting field for this player's figures
      */
-    public PlayerKeyboard(String name, int numFigures, Field startField) {
-        super(name, numFigures, startField);
+    public PlayerKeyboard(int id, String name, int numFigures, Field startField) {
+        super(id ,name, numFigures, startField);
     }
 
     /**
@@ -50,9 +50,9 @@ public class PlayerKeyboard extends Player {
             System.out.print(movableIndices[i] + 1); // display 1-based
         }
         System.out.println("):");
-        for (int i = 0; i < movableIndices.length; i++) {
-            System.out.println((movableIndices[i] + 1) + " Figure " + (movableIndices[i] + 1));
-        }
+        // for (int i = 0; i < movableIndices.length; i++) {
+        //     System.out.println((movableIndices[i] + 1) + " Figure " + (movableIndices[i] + 1));
+        // }
 
         while (true) {
             System.out.print("> ");

@@ -48,4 +48,6 @@ public interface I_Visual {
      * @param message the message to display
      */
     void displayMessage(String message);
+
+    void displayPlayboard(Field[] fields, Player[] players);
 }

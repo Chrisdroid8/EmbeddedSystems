@@ -3,8 +3,10 @@ public class GameManager {
     private final Player[] players;
     private final I_RuleSet ruleSet;
     private final I_Visual visual;
-    private static final int PLAYER_COUNT_MAX = 10;
-    private static final int FIGURES_PER_PLAYER_MAX = 20;
+    private static final int PLAYER_COUNT_MIN = 4;
+    private static final int PLAYER_COUNT_MAX = 4;
+    private static final int FIGURES_PER_PLAYER_MIN = 1;
+    private static final int FIGURES_PER_PLAYER_MAX = 4;
     private final int playerCount; // actual number of players chosen at runtime
     // Shared scanner for all interactive console input. Do not close directly; closed via shutdown hook.
     public static final java.util.Scanner SCANNER = new java.util.Scanner(System.in);
@@ -25,6 +27,8 @@ public class GameManager {
         int figuresPerPlayer = this.initialFiguresInput();
         this.visual = new VisualASCII();
         this.ruleSet = new RuleSetStandard(this.playerCount);
+
+        //int numFields = this.ruleSet.getNumFields();
         int numFields = this.ruleSet.getNumFields();
         this.fields = new Field[numFields];
         // Precompute start indices so we can assign START type while creating fields
@@ -50,15 +54,18 @@ public class GameManager {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
             }
             int startIndex = p * (fields.length / players.length);
-            players[p] = new PlayerKeyboard("Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            if (p == 0) players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            else players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
         }
+        
         resetGame();
         runGame();
     }
 
-    public void runGame() {
+    private void runGame() { // ToDo
         visual.displayMessage("Game Started!");
         visual.displayGameState(fields, players);
+        visual.displayPlayboard(fields, players);
         
         boolean gameWon = false;
         Player winner = null;
@@ -66,17 +73,15 @@ public class GameManager {
         
         // Main game loop
         while (!gameWon) {
+            ruleSet.resetLastAction();
             Player currentPlayer = players[currentPlayerIndex];
             visual.displayCurrentPlayer(currentPlayer);
             
-            boolean turnComplete = false;
-            
             // Keep rolling until the turn is complete
-            while (!turnComplete) {
+            while (true) {
                 // Check if player can roll
                 if (!ruleSet.checkRoll(currentPlayer)) {
                     visual.displayMessage(currentPlayer.getName() + " cannot roll anymore.");
-                    turnComplete = true;
                     break;
                 }
                 
@@ -100,7 +105,6 @@ public class GameManager {
                 if (chosenFigureIndex < 0 || chosenFigureIndex >= currentPlayer.getFigures().length) {
                     // This should never happen if chooseFigure is implemented correctly
                     visual.displayMessage("Invalid figure choice.");
-                    turnComplete = true;
                     break;
                 }
                 
@@ -116,10 +120,9 @@ public class GameManager {
                 }
                 
                 // Display updated game state
-                visual.displayGameState(fields, players);
-                
-                // After a successful move, the turn is complete
-                turnComplete = true;
+                //visual.displayGameState(fields, players);
+                visual.displayPlayboard(fields, players);
+                break; // End turn after a successful move
             }
             
             // Check for win
@@ -148,13 +151,13 @@ public class GameManager {
     }
 
     private int initialPlayersInput() {
-        int numPlayers = UserInput.readIntInRange("Enter number of players (2-" + PLAYER_COUNT_MAX + "): ", 2, PLAYER_COUNT_MAX, SCANNER);
+        int numPlayers = UserInput.readIntInRange("Enter number of players (" + PLAYER_COUNT_MIN + "-" + PLAYER_COUNT_MAX + "): ", PLAYER_COUNT_MIN, PLAYER_COUNT_MAX, SCANNER);
         System.out.println("Using " + numPlayers + " player.");
         return numPlayers;
     }
 
     private int initialFiguresInput() {
-        int numFigures = UserInput.readIntInRange("Enter number of figures per player (1-" + FIGURES_PER_PLAYER_MAX + "): ", 1, FIGURES_PER_PLAYER_MAX, SCANNER);
+        int numFigures = UserInput.readIntInRange("Enter number of figures per player (" + FIGURES_PER_PLAYER_MIN + "-" + FIGURES_PER_PLAYER_MAX + "): ", FIGURES_PER_PLAYER_MIN, FIGURES_PER_PLAYER_MAX, SCANNER);
         System.out.println("Using " + numFigures + " figure(s) per player.");
         return numFigures;
     }

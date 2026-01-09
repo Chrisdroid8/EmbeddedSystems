@@ -18,7 +18,6 @@ public class VisualASCII implements I_Visual {
             Field field = fields[i];
             String fieldType = getFieldTypeSymbol(field);
             String occupants = getOccupantsString(field, players);
-            
             System.out.printf("[%2d] %s %s%n", i, fieldType, occupants);
         }
         
@@ -27,7 +26,7 @@ public class VisualASCII implements I_Visual {
         System.out.println("Players:");
         for (int p = 0; p < players.length; p++) {
             Player player = players[p];
-            System.out.println("\n" + player.getName() + " (Symbol: " + getPlayerSymbol(p) + ")");
+            System.out.println("\n"+ this.getPlayerColor(player.getId()) + player.getName() +"\u001B[0m");
             
             GameFigure[] figures = player.getFigures();
             for (int f = 0; f < figures.length; f++) {
@@ -38,19 +37,145 @@ public class VisualASCII implements I_Visual {
         }
         System.out.println(SEPARATOR + "\n");
     }
+    
+    public void displayPlayboard(Field[] fields, Player[] players){
+        clearConsole();
+        String[][] boardLegende = {
+            {"H10", "H11", "-",   "-",   "F18", "F19", "F20", "-",   "-",   "H22", "H20"},
+            {"H12", "H13", "-",   "-",   "F17", "G20", "F21", "-",   "-",   "H23", "H21"},
+            {"-",   "-",   "-",   "-",   "F16", "G21", "F22", "-",   "-",   "-",   "-"  },
+            {"-",   "-",   "-",   "-",   "F15", "G22", "F23", "-",   "-",   "-",   "-"  },
+            {"F10", "F11", "F12", "F13", "F14", "G23", "F24", "F25", "F26", "F27", "F28"},
+            {"F9",  "G10", "G11", "G12", "G13", "-",   "G33", "G32", "G31", "G30", "F29"},
+            {"F8",  "F7",  "F6",  "F5",  "F4",  "G03", "F34", "F33", "F32", "F31", "F30"},
+            {"-",   "-",   "-",   "-",   "F3",  "G02", "F35", "-",   "-",   "-",   "-"  },
+            {"-",   "-",   "-",   "-",   "F2",  "G01", "F36", "-",   "-",   "-",   "-"  },
+            {"H01", "H03", "H05",   "-",   "F1",  "G00", "F37", "-",   "-",   "H33", "H32"},
+            {"H00", "H02", "H04",   "-",   "F0",  "F39", "F38", "-",   "-",   "H31", "H30"},
+        };
+        Field[][] mappedBoard = new Field[11][11]; // 2D-Array für das Board
+
+        for (int row = 0; row < boardLegende.length; row++) {
+            for (int col = 0; col < boardLegende[row].length; col++) {
+
+                String cell = boardLegende[row][col];
+
+                if (cell.equals("-")) {
+                    mappedBoard[row][col] = null;
+                    continue;
+                }
+
+                char typeChar = cell.charAt(0);
+                int index = Integer.parseInt(cell.substring(1));
+
+                switch (typeChar) {
+
+                    case 'F': // normale Spielfelder
+                        mappedBoard[row][col] = fields[index];
+                        break;
+
+                    case 'H': {
+                        int playerId = Character.getNumericValue(cell.charAt(1));
+                        if (playerId >= players.length){
+                            break;
+                        }
+                        int homeIndex = Character.getNumericValue(cell.charAt(2));
+                        if( homeIndex >= players[playerId].getFigures().length){
+                            break;
+                        }
+                        mappedBoard[row][col] = players[playerId].getHouseField(homeIndex);
+                        break;
+                    }
+
+                    case 'G': {
+                        int playerId = Character.getNumericValue(cell.charAt(1));
+                        if (playerId >= players.length){
+                            break;
+                        }
+                        int goalIndex = Character.getNumericValue(cell.charAt(2));
+                        if( goalIndex >= players[playerId].getFigures().length){
+                            break;
+                        }
+                        mappedBoard[row][col] = players[playerId].getGoalFields()[goalIndex];
+                        break;
+                    }
+
+                    default:
+                        throw new IllegalStateException("Unbekannter Feldtyp: " + cell);
+                }
+            }
+        }
+
+        for (int row = 0; row < mappedBoard.length; row++) {
+            for (int col = 0; col < mappedBoard[row].length; col++) {
+
+                Field field = mappedBoard[row][col];
+
+                if (field == null) {
+                    System.out.print(" "); // leeres Feld
+                } else {
+                    switch (field.getType()) {
+                        case NORMAL:
+                            if (field.isOccupied()){
+                                System.out.print(this.getPlayerColor(field.getOccupant().getOwner().getId()));
+                                System.out.print(String.valueOf(field.getOccupant().getId()+1));
+                            }else{
+                                System.out.print(".");
+                            }
+                            break;
+                        case HOUSE:
+                            if (field.isOccupied()){
+                                System.out.print(this.getPlayerColor(field.getOccupant().getOwner().getId()));
+                                System.out.print(String.valueOf(field.getOccupant().getId()+1));
+                            }else{
+                                System.out.print(this.getPlayerColor(Character.getNumericValue(boardLegende[row][col].charAt(1))));
+                                System.out.print(".");  
+                            }                  
+                            break;
+                        case GOAL:
+                            if (field.isOccupied()){
+                                System.out.print(this.getPlayerColor(field.getOccupant().getOwner().getId()));
+                                System.out.print(String.valueOf(field.getOccupant().getId()+1));
+                            }else{
+                                System.out.print(this.getPlayerColor(Character.getNumericValue(boardLegende[row][col].charAt(1))));
+                                System.out.print(".");  
+                            }                  
+                            break;
+                        case START:
+                            if (field.isOccupied()){
+                                System.out.print(this.getPlayerColor(field.getOccupant().getOwner().getId()));
+                                System.out.print(String.valueOf(field.getOccupant().getId()+1));
+                            }else{
+                                System.out.print(this.getPlayerColor(Character.getNumericValue(boardLegende[row][col].charAt(1))));
+                                System.out.print(".");  
+                            }                  
+                            break;
+                        default:
+                            System.out.print("?");
+                    }
+                    System.out.print("\u001B[0m");
+                }
+
+                System.out.print(" "); // Abstand zwischen Feldern
+            }
+            System.out.println(); // neue Zeile nach jeder Board-Zeile
+        }
+
+    }
+    
 
     @Override
     public void displayCurrentPlayer(Player player) {
         System.out.println("\n" + LINE);
-        System.out.println(">>> " + player.getName() + "'s Turn <<<");
+        System.out.println(">>> " + this.getPlayerColor(player.getId())+ player.getName() + "'s Turn \u001B[0m <<<");
         System.out.println(LINE);
     }
 
     @Override
     public void displayRoll(Player player, int rollValue) {
         String diceArt = getDiceArt(rollValue);
-        System.out.println("\n" + player.getName() + " rolls:");
-        System.out.println(diceArt);
+        System.out.println("\n" + this.getPlayerColor(player.getId())+ player.getName() + " rolls: \u001B[0m");
+        //System.out.println(diceArt);
         System.out.println("Result: " + rollValue);
     }
 
@@ -105,23 +230,24 @@ public class VisualASCII implements I_Visual {
      * Get string representation of occupants on a field.
      */
     private String getOccupantsString(Field field, Player[] players) {
-        StringBuilder sb = new StringBuilder();
-        
+        String occString = "";
         // Check all players' figures to see if any are on this field
         for (Player player : players) {
             GameFigure[] figures = player.getFigures();
+            int i = 0;
             for (GameFigure figure : figures) {
                 if (figure.getField() == field) {
                     int playerIndex = getPlayerIndex(player, players);
-                    sb.append(getPlayerSymbol(playerIndex)).append(" ");
+                    occString = getPlayerColor(playerIndex) + String.valueOf(i) +"\u001B[0m"+" ";
                 }
+                i++;
             }
         }
         
-        if (sb.length() == 0) {
+        if (occString.length() == 0) {
             return "Empty";
         }
-        return sb.toString().trim();
+        return occString;
     }
 
     /**
@@ -139,18 +265,36 @@ public class VisualASCII implements I_Visual {
     /**
      * Get symbol for a player based on their index.
      */
-    private String getPlayerSymbol(int playerIndex) {
-        char[] symbols = {'●', '■', '▲', '◆', '★', '♠', '♣', '♥', '♦', '☺'};
-        if (playerIndex >= 0 && playerIndex < symbols.length) {
-            return String.valueOf(symbols[playerIndex]);
+    // private String getPlayerSymbol(int playerIndex) {
+    //     char[] symbols = {'●', '■', '▲', '◆', '★', '♠', '♣', '♥', '♦', '☺'};
+    //     //String[] color = {"\u001B[31m", "\u001B[32m","\u001B[33m","\u001B[34m","\u001B[35m","\u001B[36m",};
+    //     //String[] symbols = {"\u001B[31mo\u001B[0m", "\u001B[32mo\u001B[0m","\u001B[33mo\u001B[0m","\u001B[34mo\u001B[0m","\u001B[35mo\u001B[0m","\u001B[36mo\u001B[0m",};
+    //     if (playerIndex >= 0 && playerIndex < symbols.length) {
+    //         return String.valueOf(symbols[playerIndex]);
+    //     }
+    //     return "?";
+    // }
+
+    private String getPlayerColor(int playerIndex){
+        String[] colors = {"\u001B[31m", "\u001B[32m","\u001B[33m","\u001B[34m","\u001B[35m","\u001B[36m",};
+        if (playerIndex >= 0 && playerIndex < colors.length) {
+            return String.valueOf(colors[playerIndex]);
         }
         return "?";
+    }
+
+    private static void clearConsole() {
+        System.out.print("\u001B[2J\u001B[H");
+        System.out.flush();
     }
 
     /**
      * Get location description of a field.
      */
     private String getFieldLocation(Field field, Field[] fields) {
+        
+        
+        
         if (field.isHouse()) {
             return "In House";
         } else if (field.isGoal()) {
@@ -164,6 +308,7 @@ public class VisualASCII implements I_Visual {
             return "Unknown";
         }
     }
+
 
     /**
      * Get ASCII art representation of a die face.

@@ -88,13 +88,26 @@ public class Field {
      * @return the field {@code numSteps} ahead or {@code null} if unavailable
      * @throws IllegalArgumentException when {@code numSteps} is negative
      */
-    public Field getNext(int numSteps) {
+    public Field getDestination(int numSteps, boolean tryGoal) {
         if (numSteps < 0) throw new IllegalArgumentException("numSteps must be >= 0");
-        Field current = this;
-        for (int i = 0; i < numSteps; i++) {
-            current = current.next; // boards are expected to be fully linked; nulls are not allowed
+        if (numSteps == 0) return this;
+        if (this.type == FieldType.HOUSE) {
+            return this.occupation.getPlayer().getStartField();
         }
-        return current;
+
+        Field stepCountingField = this;
+        for (int i = 0; i < numSteps; i++) {
+            // System.out.println("Count field " + stepCountingField.getIndex());
+            if (tryGoal && stepCountingField.next == this.occupation.getPlayer().getStartField()) {
+                stepCountingField = this.occupation.getPlayer().getGoalFields()[0];
+            }
+            else stepCountingField = stepCountingField.next; // boards are expected to be fully linked; nulls are not allowed
+            if (stepCountingField == null) {
+                if (!tryGoal) return this;
+                return this.getDestination(numSteps, false);
+            }
+        }
+        return stepCountingField;
     }
 
     /**
