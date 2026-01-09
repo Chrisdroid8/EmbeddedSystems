@@ -97,10 +97,7 @@ public class Field {
 
         Field stepCountingField = this;
         for (int i = 0; i < numSteps; i++) {
-            if (stepCountingField == null) {
-                if (!tryGoal) return this;
-                return this.getDestination(numSteps, false);
-            }
+            System.out.println("Count field " + stepCountingField.getIndex());
             if (tryGoal && stepCountingField.next == this.occupation.getPlayer().getStartField()) {
                 stepCountingField = this.occupation.getPlayer().getGoalFields()[0];
             }
@@ -112,7 +109,6 @@ public class Field {
         }
         return stepCountingField;
     }
-
 
     /**
      * Set the next field in sequence. Intended to be used by {@link GameManager} when building the board.
