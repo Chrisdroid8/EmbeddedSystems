@@ -54,10 +54,10 @@ public class GameManager {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
             }
             int startIndex = p * (fields.length / players.length);
-            if (p == 0) players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
-            else players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            // if (p == 0) players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            // else players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
         }
-        
         resetGame();
         runGame();
     }
@@ -109,7 +109,7 @@ public class GameManager {
                 }
                 
                 GameFigure chosenFigure = currentPlayer.getFigures()[chosenFigureIndex];
-                
+
                 // Move the figure
                 if (chosenFigure.getField().isHouse()) {
                     chosenFigure.moveOutOfHouse();
@@ -117,6 +117,13 @@ public class GameManager {
                 } else {
                     chosenFigure.move(rollValue);
                     visual.displayMove(currentPlayer, chosenFigure, rollValue);
+                }
+
+                // Wait a little before displaying to reduce flickering
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
                 
                 // Display updated game state
