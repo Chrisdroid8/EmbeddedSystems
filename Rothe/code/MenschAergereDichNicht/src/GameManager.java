@@ -54,9 +54,9 @@ public class GameManager {
                 throw new IllegalArgumentException("Fields cannot be equally distributed among players");
             }
             int startIndex = p * (fields.length / players.length);
-            // if (p == 0) players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
-            // else players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
-            players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            if (p == 0) players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            else players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            // players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
             // players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
         }
         resetGame();
