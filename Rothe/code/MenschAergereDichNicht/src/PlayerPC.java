@@ -29,13 +29,6 @@ public class PlayerPC extends Player {
             return -1;
         }
 
-        // Wait 500ms before choosing
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
         // Map movable figures to their indices within this player's figure array
         GameFigure[] all = this.getFigures();
         int randomIndex = (int) (Math.random() * movableFigures.length);
@@ -44,7 +37,7 @@ public class PlayerPC extends Player {
         // Find the index of the chosen figure in the player's figure array
         for (int j = 0; j < all.length; j++) {
             if (all[j] == chosenFigure) {
-                System.out.println(this.getName() + " (PC) chose figure " + (j + 1));
+                // System.out.println(this.getName() + " (PC) chose figure " + (j + 1));
                 return j;
             }
         }

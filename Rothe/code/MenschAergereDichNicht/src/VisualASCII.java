@@ -191,9 +191,9 @@ public class VisualASCII implements I_Visual {
         }
         
         if (steps == 0) {
-            System.out.println("→ " + player.getName() + " moves Figure " + figureIndex + " OUT OF HOUSE");
+            System.out.print(player.getName() + " moves Figure " + figureIndex + " OUT OF HOUSE");
         } else {
-            System.out.println("→ " + player.getName() + " moves Figure " + figureIndex + " by " + steps + " steps");
+            System.out.print(player.getName() + " moves Figure " + figureIndex + " by " + steps + " step(s)");
         }
     }
 

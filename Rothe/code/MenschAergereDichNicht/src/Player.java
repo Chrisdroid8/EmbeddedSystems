@@ -26,11 +26,14 @@ public abstract class Player {
         this.name = name;
         this.startField = startField;
         this.numFigures = numFigures;
+
+        // Create figures and place them in the player's house
         this.figures = new GameFigure[this.numFigures];
         for (int i = 0; i < this.numFigures; i++) {
             this.figures[i] = new GameFigure(this, i);
             this.figures[i].moveToHouse();
         }
+
         // Create goal fields for this player: one goal field per figure
         this.goalFields = new Field[this.numFigures];
         for (int i = 0; i < this.numFigures; i++) {
@@ -40,6 +43,8 @@ public abstract class Player {
                 this.goalFields[i - 1].setNext(this.goalFields[i]);
             }
         }
+
+        // Create a standard 6-sided die for this player
         this.die = new Die6();
     }
 
