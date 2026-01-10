@@ -122,7 +122,7 @@ public class GameManager {
 
                 // Wait a little before displaying to reduce flickering
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
