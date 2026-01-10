@@ -57,6 +57,7 @@ public class GameManager {
             // if (p == 0) players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
             // else players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
             players[p] = new PlayerPC(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
+            // players[p] = new PlayerKeyboard(p,"Player " + (p + 1), figuresPerPlayer, fields[startIndex]);
         }
         resetGame();
         runGame();
@@ -121,7 +122,7 @@ public class GameManager {
 
                 // Wait a little before displaying to reduce flickering
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
