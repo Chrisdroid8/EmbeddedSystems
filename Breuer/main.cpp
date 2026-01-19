@@ -1,7 +1,7 @@
 //*******************************************************************
 /*!
 \file   main.cpp
-\author Ina Cirpka
+\author Gruppe Nimbus2000
 \date   04.01.2026
 \brief  Stoppuhr
 */
@@ -10,176 +10,200 @@
 #include <stdio.h>
 #include <cmath> //für fmod() benötigt
 #include "EmbSysLib.h"
-//-------------------------------------------------------------------
 #include "ReportHandler.h"
 #include "config.h"
 
 //*******************************************************************
 /*
-  LED:
-    LD1  red   PJ13
-    LD2 green  PJ5
+    LED-Belegung:
+        LD1  rot     PJ13
+        LD2  grün    PJ5
 
-  Button:
-    Btn1       PF8
-    Btn2       PF9
-    Btn3       PA6
-    User       PA0
-
+    Taster-Belegung:
+        Btn1         PF8
+        Btn2         PF9
+        Btn3         PA6
+        User         PA0
 */
-//*******************************************************************
-
 //*******************************************************************
 
 class App : public Timer::Task
 {
-	public:
-	//--------------------------------------------------------------
-	enum State
-	{
-		CLEAR,
-		RUNNING,
-		STOPPED
-	};
-
-
-    //---------------------------------------------------------------
-    App( Timer *timer )
+public:
+    // Zustände der Stoppuhr
+    // CLEAR   : Zeit ist zurückgesetzt
+    // RUNNING : Zeit läuft
+    // STOPPED : Zeit ist angehalten
+    enum State
     {
-      T = timer->getCycleTime()*1E-6;
-      timer->add( this );
+        CLEAR,
+        RUNNING,
+        STOPPED
+    };
+
+    // Konstruktor:
+    // - ermittelt die Timer-Periode in Sekunden
+    // - registriert die App als Task beim Timer
+    App(Timer *timer)
+    {
+        T = timer->getCycleTime() * 1E-6f;
+        timer->add(this);
     }
 
-    //---------------------------------------------------------------
+    // Wird zyklisch vom Timer aufgerufen
+    // Erhöht den Zähler nur, wenn die Stoppuhr läuft
     void update()
     {
-      if(state == RUNNING)
-		{
-			cnt++;
-		}
-    }
-    //--------------------------------------------------------------
-
-    void start()
-    {
-    	if(state == CLEAR)
-    		state = RUNNING;
-    	else if(state == STOPPED)
-    		state = RUNNING;
-    }
-
-    //--------------------------------------------------------------
-
-    void stop()
-    {
-    	if(state == RUNNING)
-        	state = STOPPED;
-    }
-
-    //--------------------------------------------------------------
-
-    void reset()
-    {
-        if(state == STOPPED)
+        if (state == RUNNING)
         {
-        	cnt = 0;
-        	state = CLEAR;
+            cnt++;
         }
     }
 
-    //---------------------------------------------------------------
-    float getTime()
+    // Startet die Stoppuhr
+    // Erlaubt aus CLEAR oder STOPPED
+    void start()
     {
-      return( (float)cnt*T );
+        if (state == CLEAR || state == STOPPED)
+        {
+            state = RUNNING;
+        }
     }
 
-	private:
-    //---------------------------------------------------------------
-    DWORD cnt = 0;
-    float T;
-    State state = CLEAR;
+    // Stoppt die Stoppuhr
+    // Nur erlaubt im Zustand RUNNING
+    void stop()
+    {
+        if (state == RUNNING)
+        {
+            state = STOPPED;
+        }
+    }
+
+    // Setzt die Stoppuhr zurück
+    // Nur erlaubt im Zustand STOPPED
+    void reset()
+    {
+        if (state == STOPPED)
+        {
+            cnt = 0;
+            state = CLEAR;
+        }
+    }
+
+    // Gibt die gemessene Zeit in Sekunden zurück
+    float getTime()
+    {
+        return static_cast<float>(cnt) * T;
+    }
+
+private:
+    DWORD cnt = 0;        // Anzahl der Timer-Ticks
+    float T;              // Dauer eines Timer-Ticks in Sekunden
+    State state = CLEAR;  // aktueller Zustand der Stoppuhr
 };
 
 //*******************************************************************
 
 int main(void)
 {
-  //Deklaration Warnungen
-  bool warningActive = false;    // Warnung wird gerade angezeigt
-  bool multiPressed = false;     // Es wurde mehrere Tasten gleichzeitig gedrückt
-  //Deklaration für Visualisierung Balken
-  const int maxBars = 50;   // Maximale Balkenlänge (Anzahl Zeichen)
-      const float maxTime = 60; // 60 Sekunden für kompletten Balken
+    // Deklaration: Statusvariablen für Warnmeldungen
+    bool warningActive = false;   // Warnung wird angezeigt
+    bool multiPressed  = false;   // Mehrere Taster gleichzeitig gedrückt
 
-  lcd.printf( 0, 0, __DATE__ "," __TIME__ );
-  lcd.printf( 1, 0, "Beste Stoppuhr" );
-  lcd.refresh();
-  App app( &timer );
+    // Deklaration: Parameter für die Balkenanzeige
+    const int   maxBars = 50;     // Maximale Balkenlänge
+    const float maxTime = 60.0f;  // Zeit für einen vollen Balken
 
-  while(1)
-  {
-	  //Tastersteuerung
-	  if(Btn1.get())
-		  app.start();
+    // Startanzeige auf dem LCD
+    lcd.printf(0, 0, __DATE__ "," __TIME__);
+    lcd.printf(1, 0, "beste Stoppuhr");
+    lcd.refresh();
 
-	  if(Btn2.get())
-		  app.stop();
+    // Applikation initialisieren und beim Timer anmelden
+    App app(&timer);
 
-	  if(Btn3.get())
-		  app.reset();
+    while (1)
+    {
+        // Tasterauswertung
+        if (Btn1.get())
+        {
+            app.start();
+        }
 
-	  //Zeitanzeige
-	  float totalSeconds = app.getTime();        // Gesamtzeit in Sekunden
-	  int minutes = (int)(totalSeconds / 60);   // ganze Minuten
-	  int seconds = (int)(totalSeconds) % 60;   // Rest-Sekunden
-	  int milliseconds = (int)((totalSeconds - (minutes*60 + seconds)) * 1000); // Rest in ms
-	  lcd.printf(3, 0, "Time: %02dmin %02ds %03dms", minutes, seconds, milliseconds);
+        if (Btn2.get())
+        {
+            app.stop();
+        }
 
-	  /*
-	  //LEDs leuchten bei Betätigung
-	  LD1.set( Btn1.get() );
-	  LD2.set( Btn2.get() );
+        if (Btn3.get())
+        {
+            app.reset();
+        }
 
-	  //Tasterinput als boolean anzeigen
-	  lcd.printf( 4, 0, "User:%d", User.get() );
-	  lcd.printf( 5, 0, "Btn1:%d", Btn1.get() );
-	  lcd.printf( 6, 0, "Btn2:%d", Btn2.get() );
-	  lcd.printf( 7, 0, "Btn3:%d", Btn3.get() );
-	  */
-	  // ---- Warnung bei mehreren gedrückten Tasten ----
-	  int pressed = Btn1.get() + Btn2.get() + Btn3.get();
+        // Zeitberechnung
+        float totalSeconds = app.getTime();
+        int minutes        = static_cast<int>(totalSeconds / 60);
+        int seconds        = static_cast<int>(totalSeconds) % 60;
+        int milliseconds   = static_cast<int>(
+                                (totalSeconds - (minutes * 60 + seconds)) * 1000
+                              );
 
-	  if(pressed > 1)
-	  {
-	      // Mehrere Tasten gleichzeitig -> Warnung aktivieren
-	      warningActive = true;
-	      multiPressed = true;
-	      lcd.printf(8, 0, "WARNUNG: Mehrere Tasten gedrueckt!");
-	  }
-	  else
-	  {
-	      // Nur eine Taste gedrückt
-	      if(multiPressed && pressed == 1)
-	      {
-	          // Ein weiterer Knopf wurde gedrückt -> Warnung löschen
-	          warningActive = false;
-	          multiPressed = false;
-	          lcd.printf(8, 0, "                                      "); // Warnung löschen
-	      }
-	  }
-	  //Visualisierung
-	  float timeForBar = fmod(app.getTime(), maxTime);
-	  int bars = (int)((timeForBar / maxTime) * maxBars);
-	          if(bars > maxBars) bars = maxBars;
+        // Anzeige der Zeit
+        lcd.printf(
+            3,
+            0,
+            "Time: %02dmin %02ds %03dms",
+            minutes,
+            seconds,
+            milliseconds
+        );
 
-	          char line[maxBars+1];  // maxBars Zeichen + Nullterminator
-	                  for(int i=0; i<bars; i++) line[i]='|';
-	                  for(int i=bars; i<maxBars; i++) line[i]='                                  ';
-	                  line[maxBars] = '\0';
+        // Warnung bei gleichzeitiger Betätigung mehrerer Taster
+        int pressed = Btn1.get() + Btn2.get() + Btn3.get();
 
-	                  lcd.printf(4, 0, "%s", line); // Balkenzeile ausgeben
-	  lcd.refresh(); //Bildschirm aktualisieren
-  }
+        if (pressed > 1)
+        {
+            warningActive = true;
+            multiPressed  = true;
+            lcd.printf(8, 0, "WARNUNG: Mehrere Tasten gedrueckt!");
+        }
+        else
+        {
+            if (multiPressed && pressed == 1)
+            {
+                warningActive = false;
+                multiPressed  = false;
+                lcd.printf(8, 0, "                                      ");
+            }
+        }
 
-  //visulaisierung
+        // Balkenanzeige zur Visualisierung der Zeit
+        float timeForBar = fmod(app.getTime(), maxTime);
+        int bars         = static_cast<int>((timeForBar / maxTime) * maxBars);
+
+        if (bars > maxBars)
+        {
+            bars = maxBars;
+        }
+
+        char line[maxBars + 1];
+
+        for (int i = 0; i < bars; i++)
+        {
+            line[i] = '|';
+        }
+
+        for (int i = bars; i < maxBars; i++)
+        {
+            line[i] = ' ';
+        }
+
+        line[maxBars] = '\0';
+
+        lcd.printf(4, 0, "%s", line);
+
+        // LCD aktualisieren
+        lcd.refresh();
+    }
 }
