@@ -10,6 +10,7 @@ public abstract class Player {
     private final Field[] goalFields;
     private final int numFigures;
     private final I_Rollable die;
+    private final int id;
 
     /**
      * Create a player with the given name, number of figures, and starting field.
@@ -20,20 +21,30 @@ public abstract class Player {
      * @param numFigures number of figures this player owns
      * @param startField the starting field for this player's figures
      */
-    protected Player(String name, int numFigures, Field startField) {
+    protected Player(int id,String name, int numFigures, Field startField) {
+        this.id = id;
         this.name = name;
         this.startField = startField;
         this.numFigures = numFigures;
+
+        // Create figures and place them in the player's house
         this.figures = new GameFigure[this.numFigures];
         for (int i = 0; i < this.numFigures; i++) {
-            this.figures[i] = new GameFigure(this);
+            this.figures[i] = new GameFigure(this, i);
+            this.figures[i].moveToHouse();
         }
+
         // Create goal fields for this player: one goal field per figure
         this.goalFields = new Field[this.numFigures];
         for (int i = 0; i < this.numFigures; i++) {
             // Use negative indices for player-specific special fields
             this.goalFields[i] = new Field(-100 - i, FieldType.GOAL);
+            if (i > 0) {
+                this.goalFields[i - 1].setNext(this.goalFields[i]);
+            }
         }
+
+        // Create a standard 6-sided die for this player
         this.die = new Die6();
     }
 
@@ -51,6 +62,10 @@ public abstract class Player {
 
     public int roll() {
         return die.roll();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public GameFigure[] getFigures() {
@@ -71,7 +86,7 @@ public abstract class Player {
         return this.goalFields;
     }
 
-    public int getFiguresInHouse() {
+    public int getNumFiguresInHouse() {
         int count = 0;
         for (GameFigure figure : this.figures) {
             Field f = figure.getField();
@@ -90,5 +105,12 @@ public abstract class Player {
                 return;
             }
         }
+    }
+
+    public Field getHouseField(int i) {
+        if( i<0 || i>=this.figures.length){
+            throw new IllegalArgumentException("Index out of bounds for house fields");
+        }
+        return this.figures[i].getHouseField();
     }
 }

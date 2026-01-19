@@ -9,10 +9,9 @@ public interface I_RuleSet {
      * Check if the active player is allowed to roll the die.
      * 
      * @param player the active player
-     * @param rollValue the value rolled by the player
      * @return {@code true} if the player may roll, {@code false} otherwise
      */
-    boolean checkRoll(Player player, int rollValue);
+    boolean checkRoll(Player player);
 
     /**
      * Check which figures the active player can move based on the roll value.
@@ -37,4 +36,11 @@ public interface I_RuleSet {
      * @return the number of board fields
      */
     int getNumFields();
+
+
+    /**
+     * Resets the Last action per Turn
+     * 
+     */
+    void resetLastAction();
 }
